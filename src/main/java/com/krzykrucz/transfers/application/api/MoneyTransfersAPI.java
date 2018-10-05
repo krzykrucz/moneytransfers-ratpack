@@ -1,0 +1,22 @@
+package com.krzykrucz.transfers.application.api;
+
+import com.krzykrucz.transfers.application.error.DomainExceptionHandler;
+import ratpack.error.ServerErrorHandler;
+import ratpack.func.Action;
+import ratpack.handling.Chain;
+
+
+public class MoneyTransfersAPI implements Action<Chain> {
+
+    @Override
+    public void execute(Chain chain) throws Exception {
+        chain
+                .register(r -> r.add(ServerErrorHandler.class, new DomainExceptionHandler()))
+                .post("transfer", TransferCommandHandler.class)
+                .post("account", CreateAccountHandler.class)
+                .get("account/:number", GetAccountHandler.class)
+                .post("deposit", DepositMoneyHandler.class)
+                .all(ctx -> ctx.render("Root handler"));
+    }
+
+}
