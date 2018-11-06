@@ -108,11 +108,11 @@ class TransfersEndToEndTest extends Specification {
         }
 
         def transfered(from, to) {
-            post('transfer', [value: [amount: money.amount, currency: money.currencyUnit.code], from: from, to: to])
+            post('transfer', [value: [amount: money.amountMinor, currency: money.currencyUnit.code], from: from, to: to])
         }
 
         def "deposited on account"(number) {
-            post('deposit', [value: [amount: money.amount, currency: money.currencyUnit.code], accountNumber: number])
+            post('deposit', [value: [amount: money.amountMinor, currency: money.currencyUnit.code], accountNumber: number])
         }
     }
 

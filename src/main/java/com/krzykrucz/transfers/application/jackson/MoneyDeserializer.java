@@ -22,11 +22,11 @@ public class MoneyDeserializer extends StdDeserializer<Money> {
     public Money deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         final JsonNode moneyTree = jp.readValueAsTree();
 
-        final double amount = moneyTree.get("amount").asDouble();
+        final int amount = moneyTree.get("amount").asInt();
 
         final JsonNode currencyNode = moneyTree.get("currency");
         final CurrencyUnit currency = currencyNode == null ? CurrencyUnit.USD : CurrencyUnit.of(currencyNode.asText());
 
-        return Money.of(currency, amount);
+        return Money.ofMinor(currency, amount);
     }
 }
