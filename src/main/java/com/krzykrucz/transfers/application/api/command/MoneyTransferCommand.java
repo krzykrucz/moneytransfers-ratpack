@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.krzykrucz.transfers.application.jackson.MoneyDeserializer;
 import com.krzykrucz.transfers.domain.account.AccountNumber;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.joda.money.Money;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class MoneyTransferCommand {
 
     private String from;
