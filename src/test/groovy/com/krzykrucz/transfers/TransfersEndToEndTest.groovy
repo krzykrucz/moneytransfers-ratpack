@@ -21,7 +21,7 @@ class TransfersEndToEndTest extends Specification {
 
     def httpResponseCodes = []
 
-    MainClassApplicationUnderTest app = new com.krzykrucz.transfers.TestApplicationWithMockedServices(MoneyTransfersApplication)
+    MainClassApplicationUnderTest app = new TestApplicationWithMockedServices(MoneyTransfersApplication)
 
     def cleanup() {
         app.close()

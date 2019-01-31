@@ -1,7 +1,6 @@
 package com.krzykrucz.transfers.application.jackson;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -19,7 +18,7 @@ public class MoneyDeserializer extends StdDeserializer<Money> {
     }
 
     @Override
-    public Money deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public Money deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         final JsonNode moneyTree = jp.readValueAsTree();
 
         final int amount = moneyTree.get("amount").asInt();

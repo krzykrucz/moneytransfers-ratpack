@@ -13,7 +13,7 @@ public class DomainExceptionHandler implements ServerErrorHandler {
     private static final Status SERVER_ERROR = Status.of(500);
 
     @Override
-    public void error(Context context, Throwable throwable) throws Exception {
+    public void error(Context context, Throwable throwable) {
         this.handleError(throwable, context);
     }
 

@@ -26,7 +26,7 @@ public class GetAccountHandler implements Handler {
     }
 
     @Override
-    public void handle(Context ctx) throws Exception {
+    public void handle(Context ctx) {
         final AccountNumber accountNumber = new AccountNumber(ctx.getPathTokens().get("number"));
         final Account account = accountRepository.findByAccountNumber(accountNumber);
         final AccountInfo accountInfo = new AccountInfo(account);

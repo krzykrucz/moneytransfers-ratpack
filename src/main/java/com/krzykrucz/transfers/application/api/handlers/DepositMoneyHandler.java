@@ -22,7 +22,7 @@ public class DepositMoneyHandler implements Handler {
     }
 
     @Override
-    public void handle(Context ctx) throws Exception {
+    public void handle(Context ctx) {
         ctx.parse(fromJson(DepositMoneyCommand.class))
                 .then(moneyTransferCommand -> {
                     transfersApplicationService.depositMoney(moneyTransferCommand);

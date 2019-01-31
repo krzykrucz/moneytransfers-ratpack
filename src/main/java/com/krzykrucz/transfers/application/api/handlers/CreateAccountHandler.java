@@ -22,7 +22,7 @@ public class CreateAccountHandler implements Handler {
     }
 
     @Override
-    public void handle(Context ctx) throws Exception {
+    public void handle(Context ctx) {
         ctx.parse(fromJson(OpenAccountCommand.class))
                 .then(moneyTransferCommand -> {
                     transfersApplicationService.openAccount(moneyTransferCommand);

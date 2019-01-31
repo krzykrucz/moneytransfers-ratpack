@@ -5,7 +5,7 @@ import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import ratpack.guice.BindingsImposition
 import ratpack.impose.ImpositionsSpec
-import ratpack.test.MainClassApplicationUnderTest;
+import ratpack.test.MainClassApplicationUnderTest
 
 class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
 

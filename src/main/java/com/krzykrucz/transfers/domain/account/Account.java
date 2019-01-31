@@ -38,7 +38,7 @@ public class Account extends Aggregate { // TODO extend aggregate root
     private final CurrencyExchanger currencyExchanger;
     @Getter
     private Money balance;
-    private CurrencyUnit currency;
+    private final CurrencyUnit currency;
     // TODO enclose with a value object
     private Map<TransferReferenceNumber, Money> moneyBlockedOnTransfers;
     // TODO replace with domain events lib
