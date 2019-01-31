@@ -6,7 +6,7 @@ import org.joda.money.Money;
 
 public class IdentityCurrencyExchanger implements CurrencyExchanger {
     @Override
-    public Money exchange(Money money, CurrencyUnit currencyUnit) {
+    public Money exchangeIfNecessary(Money money, CurrencyUnit currencyUnit) {
         return Money.of(currencyUnit, money.getAmount());
     }
 }

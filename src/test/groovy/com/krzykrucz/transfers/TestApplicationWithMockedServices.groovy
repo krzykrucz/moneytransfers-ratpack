@@ -29,7 +29,7 @@ class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
 
     class NoOpCurrencyExchanger implements CurrencyExchanger {
         @Override
-        Money exchange(Money money, CurrencyUnit targetCurrencyUnit) {
+        Money exchangeIfNecessary(Money money, CurrencyUnit targetCurrencyUnit) {
             Money.of(targetCurrencyUnit, money.amount)
         }
     }

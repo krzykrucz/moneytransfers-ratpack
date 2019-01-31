@@ -16,7 +16,7 @@ class ThrowingExternalCurrencyExchanger implements CurrencyExchanger {
     }
 
     @Override
-    Money exchange(Money money, CurrencyUnit targetCurrencyUnit) {
+    Money exchangeIfNecessary(Money money, CurrencyUnit targetCurrencyUnit) {
         throw new RuntimeException(text)
     }
 }

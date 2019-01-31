@@ -21,7 +21,7 @@ class ExternalCurrencyExchangerTest extends Specification {
         def exchanger = new ExternalCurrencyExchanger(client, new ObjectMapper())
 
         when:
-        def exchanged = exchanger.exchange(Money.of(CurrencyUnit.USD, 10), CurrencyUnit.EUR)
+        def exchanged = exchanger.exchangeIfNecessary(Money.of(CurrencyUnit.USD, 10), CurrencyUnit.EUR)
 
         then:
         that exchanged.amount, closeTo(8.54, 0.1)

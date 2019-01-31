@@ -36,7 +36,7 @@ public class ExternalCurrencyExchanger implements CurrencyExchanger {
     }
 
     @Override
-    public Money exchange(Money money, CurrencyUnit targetCurrencyUnit) {
+    public Money exchangeIfNecessary(Money money, CurrencyUnit targetCurrencyUnit) {
         final CurrencyUnit baseCurrency = money.getCurrencyUnit();
         try {
             final HttpResponse response = httpClient.execute(new HttpGet(String.format(EXTERNAL_EXCHANGE_RATE_API_URL, baseCurrency.getCode())));

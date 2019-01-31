@@ -1,6 +1,6 @@
 package com.krzykrucz.transfers.application.api.handlers.internal;
 
-import com.krzykrucz.transfers.domain.DomainEvent;
+import com.krzykrucz.transfers.domain.common.DomainEvent;
 
 @FunctionalInterface
 public interface DomainEventHandler {

@@ -1,11 +1,11 @@
 package com.krzykrucz.transfers.application.api.handlers.internal;
 
 import com.krzykrucz.transfers.application.TransfersApplicationService;
-import com.krzykrucz.transfers.domain.DomainEvent;
-import com.krzykrucz.transfers.domain.DomainEventPublisher;
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferAccepted;
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferCommissioned;
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferRejected;
+import com.krzykrucz.transfers.domain.common.DomainEvent;
+import com.krzykrucz.transfers.domain.common.DomainEventPublisher;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

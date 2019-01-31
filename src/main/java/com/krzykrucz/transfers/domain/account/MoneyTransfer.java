@@ -10,7 +10,7 @@ import org.joda.money.Money;
 @EqualsAndHashCode(of = "referenceNumber")
 @AllArgsConstructor
 @Singleton
-public class MoneyTransfer { // TODO make value validation
+public class MoneyTransfer { // TODO make all values validation
     private final TransferReferenceNumber referenceNumber;
     private final Money value;
     private final AccountNumber from;

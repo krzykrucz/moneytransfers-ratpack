@@ -1,9 +1,9 @@
 package com.krzykrucz.transfers.infrastructure.persistence;
 
 import com.google.common.collect.Maps;
-import com.krzykrucz.transfers.domain.DomainEvent;
-import com.krzykrucz.transfers.domain.DomainEventPublisher;
 import com.krzykrucz.transfers.domain.account.*;
+import com.krzykrucz.transfers.domain.common.DomainEvent;
+import com.krzykrucz.transfers.domain.common.DomainEventPublisher;
 import io.vavr.collection.List;
 
 import javax.inject.Inject;
@@ -32,7 +32,7 @@ public class InMemoryAccountRepository implements AccountRepository {
         final List<DomainEvent> events = account.getEventsAndFlush();
         accounts.put(account.getId(), account);
         accountsByNumber.put(account.getNumber(), account);
-        account.getPendingTransfersReferenceNumbers()
+        account.getPendingTransfers()
                 .forEach(transferRefNumber -> accountsByTransfer.put(transferRefNumber, account));
         events.forEach(eventPublisher::publish);
     }

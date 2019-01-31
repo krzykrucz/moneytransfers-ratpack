@@ -1,13 +1,10 @@
 package com.krzykrucz.transfers.domain.account;
 
-import com.krzykrucz.transfers.domain.Aggregate;
-import com.krzykrucz.transfers.domain.CurrencyExchanger;
-import com.krzykrucz.transfers.domain.DomainEvent;
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferAccepted;
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferCommissioned;
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferRejected;
+import com.krzykrucz.transfers.domain.common.Aggregate;
 import io.vavr.collection.HashMap;
-import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.collection.Set;
 import lombok.EqualsAndHashCode;
@@ -24,94 +21,118 @@ public class Account extends Aggregate { // TODO extend aggregate root
 
     // TODO handle versions
 
-
-    // TODO enclose with a policy
-    private static final int DEFAULT_TRANSFER_RECEIVE_LIMIT = 10000;
-
     @Getter
     private final AccountIdentifier id;
 
     @Getter
     private final AccountNumber number;
 
-    // TODO move outside of the aggregate
-    private final CurrencyExchanger currencyExchanger;
+    @Getter
+    private final CurrencyUnit currency;
+
     @Getter
     private Money balance;
-    private final CurrencyUnit currency;
+
+    private final TransferReceiveLimitPolicy transferReceiveLimit;
+
+    private final AccountDomainValidator validator;
+
     // TODO enclose with a value object
     private Map<TransferReferenceNumber, Money> moneyBlockedOnTransfers;
-    // TODO replace with domain events lib
-    private List<DomainEvent> domainEvents;
-    private final Money transferReceiveLimit;
 
-    public Account(AccountIdentifier id, AccountNumber number, CurrencyUnit currency, CurrencyExchanger currencyExchanger) {
+    public Account(AccountIdentifier id, AccountNumber number, CurrencyUnit currency) {
         this.id = id;
         this.balance = Money.zero(currency);
         this.currency = currency;
         this.number = number;
-        this.currencyExchanger = currencyExchanger;
         this.moneyBlockedOnTransfers = HashMap.empty();
-        this.domainEvents = List.empty();
-        this.transferReceiveLimit = Money.of(currency, DEFAULT_TRANSFER_RECEIVE_LIMIT);
+        this.transferReceiveLimit = new TransferReceiveLimitPolicy(currency);
+        this.validator = new AccountDomainValidator();
     }
 
     public void commissionTransferTo(AccountNumber anotherAccount, Money transferValue) {
-        final Money transferValueInAccountsCurrency = exchangeIfNecessary(transferValue); // TODO replace with currency check
-        checkState(!balance.isLessThan(transferValueInAccountsCurrency), "Not enough money on account to do a transfer");
+        validator.validateOutcomingTransfer(transferValue);
 
-        this.balance = balance.minus(transferValueInAccountsCurrency);
+        this.balance = balance.minus(transferValue);
 
         final MoneyTransfer transfer = MoneyTransfer.generateMoneyTransfer(transferValue, this.number, anotherAccount);
-        this.moneyBlockedOnTransfers = moneyBlockedOnTransfers.put(transfer.getReferenceNumber(), transferValueInAccountsCurrency);
+        this.moneyBlockedOnTransfers = moneyBlockedOnTransfers.put(transfer.getReferenceNumber(), transferValue);
 
-        this.domainEvents = domainEvents.push(new MoneyTransferCommissioned(this.id, transferValueInAccountsCurrency, transfer));
+        publishEvent(new MoneyTransferCommissioned(this.id, transferValue, transfer));
     }
 
     public void confirmTransfer(TransferReferenceNumber transferReferenceNumber) {
+        validator.checkExists(transferReferenceNumber);
+
         this.moneyBlockedOnTransfers = moneyBlockedOnTransfers.remove(transferReferenceNumber);
     }
 
     public void rejectTransfer(TransferReferenceNumber transferReferenceNumber) {
+        validator.checkExists(transferReferenceNumber);
+
         this.moneyBlockedOnTransfers.get(transferReferenceNumber)
                 .peek(moneyToAddBack -> this.balance = balance.plus(moneyToAddBack));
         this.moneyBlockedOnTransfers = moneyBlockedOnTransfers.remove(transferReferenceNumber);
     }
 
     public void receiveTransfer(MoneyTransfer transfer) {
-        // TODO currency check
-        checkState(transfer.getTo().equals(this.number), "Received transfer for a different account");
-        final Money transferValueInAccountsCurrency = exchangeIfNecessary(transfer.getValue());
+        validator.validateIncomingTransfer(transfer);
 
-        final boolean transferExceedsReceiveLimit = transferValueInAccountsCurrency.isGreaterThan(transferReceiveLimit);
-        if (transferExceedsReceiveLimit) {
-            this.domainEvents = domainEvents.push(new MoneyTransferRejected(this.id, transfer.getReferenceNumber()));
+        if (transferReceiveLimit.isExceededFor(transfer)) {
+            publishEvent(new MoneyTransferRejected(this.id, transfer.getReferenceNumber()));
             return;
         }
 
-        this.balance = balance.plus(transferValueInAccountsCurrency);
-        this.domainEvents = domainEvents.push(new MoneyTransferAccepted(this.id, transfer.getReferenceNumber()));
+        this.balance = balance.plus(transfer.getValue());
+        publishEvent(new MoneyTransferAccepted(this.id, transfer.getReferenceNumber()));
     }
 
+
     public void depositMoney(Money money) {
-        money = exchangeIfNecessary(money);
+        validator.checkCurrency(money);
+
         this.balance = this.balance.plus(money);
     }
 
-    public List<DomainEvent> getEventsAndFlush() {
-        final List<DomainEvent> eventsCopy = domainEvents;
-        this.domainEvents = List.empty();
-        return eventsCopy;
-    }
-
-    private Money exchangeIfNecessary(Money transferValue) {
-        if (transferValue.getCurrencyUnit().equals(this.currency)) {
-            return transferValue;
-        }
-        return currencyExchanger.exchange(transferValue, this.currency);
-    }
-
-    public Set<TransferReferenceNumber> getPendingTransfersReferenceNumbers() {
+    public Set<TransferReferenceNumber> getPendingTransfers() {
         return moneyBlockedOnTransfers.keySet();
+    }
+
+    private class AccountDomainValidator {
+        private void validateIncomingTransfer(MoneyTransfer transfer) {
+            checkCurrency(transfer.getValue());
+            checkState(transfer.getTo().equals(number), "Received transfer for a different account");
+        }
+
+        private void validateOutcomingTransfer(Money transferValue) {
+            checkCurrency(transferValue);
+            checkState(!balance.isLessThan(transferValue), "Not enough money on account to do a transfer");
+        }
+
+        private void checkCurrency(Money money) {
+            checkState(money.getCurrencyUnit().equals(currency), "Received a transfer with a different currency");
+        }
+
+        private void checkExists(TransferReferenceNumber transferReferenceNumber) {
+            checkState(moneyBlockedOnTransfers.keySet()
+                            .contains(transferReferenceNumber),
+                    "No pending transfer with that reference"
+            );
+        }
+    }
+
+    private class TransferReceiveLimitPolicy {
+        private static final int DEFAULT_TRANSFER_RECEIVE_LIMIT = 10000;
+
+        private final Money limit;
+
+        private TransferReceiveLimitPolicy(CurrencyUnit currencyUnit) {
+            this.limit = Money.of(currencyUnit, DEFAULT_TRANSFER_RECEIVE_LIMIT);
+        }
+
+        boolean isExceededFor(MoneyTransfer moneyTransfer) {
+            return moneyTransfer.getValue()
+                    .isGreaterThan(limit);
+        }
     }
 }

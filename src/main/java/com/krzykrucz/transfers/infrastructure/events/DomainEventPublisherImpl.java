@@ -2,8 +2,8 @@ package com.krzykrucz.transfers.infrastructure.events;
 
 import com.google.common.collect.Lists;
 import com.krzykrucz.transfers.application.api.handlers.internal.DomainEventHandler;
-import com.krzykrucz.transfers.domain.DomainEvent;
-import com.krzykrucz.transfers.domain.DomainEventPublisher;
+import com.krzykrucz.transfers.domain.common.DomainEvent;
+import com.krzykrucz.transfers.domain.common.DomainEventPublisher;
 
 import javax.inject.Singleton;
 import java.util.Collection;

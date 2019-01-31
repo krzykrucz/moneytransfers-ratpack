@@ -14,6 +14,7 @@ import static org.joda.money.CurrencyUnit.USD
 class TransfersEndToEndTest extends Specification {
 
     final def TEN_DOLLARS = Money.of USD, 10
+    final def TEN_EURO = Money.of EUR, 10
     final def THIRTY_DOLLARS = Money.of USD, 30
     final def THIRTY_EURO = Money.of EUR, 30
 
@@ -50,6 +51,31 @@ class TransfersEndToEndTest extends Specification {
         then:
         'balance of account'('01') == '$20.00'
         'balance of account'('02') == '$40.00'
+        and:
+        'all responses are' 200
+    }
+
+    def "should transfer money with a different currency"() {
+        given:
+        'account created' '01', 'USD'
+        'account created' '02', 'EUR'
+
+        when:
+        money THIRTY_EURO 'deposited on account' '01'
+        money THIRTY_DOLLARS 'deposited on account' '02'
+
+        then:
+        'balance of account'('01') == '$30.00'
+        'balance of account'('02') == 'EUR30.00'
+
+        when:
+        money(TEN_EURO).transfered('02', '01')
+        money(TEN_DOLLARS).transfered('01', '02')
+
+        then:
+        'balance of account'('01') == '$30.00'
+        'balance of account'('02') == 'EUR30.00'
+
         and:
         'all responses are' 200
     }

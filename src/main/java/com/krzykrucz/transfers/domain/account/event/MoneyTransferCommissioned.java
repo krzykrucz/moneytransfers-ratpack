@@ -1,8 +1,8 @@
 package com.krzykrucz.transfers.domain.account.event;
 
-import com.krzykrucz.transfers.domain.DomainEvent;
 import com.krzykrucz.transfers.domain.account.AccountIdentifier;
 import com.krzykrucz.transfers.domain.account.MoneyTransfer;
+import com.krzykrucz.transfers.domain.common.DomainEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.joda.money.Money;

@@ -1,8 +1,8 @@
 package com.krzykrucz.transfers.domain.account.event;
 
-import com.krzykrucz.transfers.domain.DomainEvent;
 import com.krzykrucz.transfers.domain.account.AccountIdentifier;
 import com.krzykrucz.transfers.domain.account.TransferReferenceNumber;
+import com.krzykrucz.transfers.domain.common.DomainEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 

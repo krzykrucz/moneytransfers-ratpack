@@ -1,14 +1,13 @@
 package com.krzykrucz.transfers.domain.account
 
-import com.krzykrucz.transfers.domain.CurrencyExchanger
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferAccepted
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferCommissioned
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferRejected
-import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import spock.lang.Specification
 
 import static com.krzykrucz.transfers.domain.account.AccountIdentifier.generate
+import static org.joda.money.CurrencyUnit.EUR
 import static org.joda.money.CurrencyUnit.USD
 
 class AccountTest extends Specification {
@@ -45,10 +44,10 @@ class AccountTest extends Specification {
         account.commissionTransferTo ACCOUNT_2, TEN_DOLLARS
 
         then:
-        account.pendingTransfersReferenceNumbers.size() == 1
+        account.pendingTransfers.size() == 1
         account.balance == TEN_DOLLARS
 
-        def pendingTransfer = account.pendingTransfersReferenceNumbers.head()
+        def pendingTransfer = account.pendingTransfers.head()
         def expectedTransfer = new MoneyTransfer(pendingTransfer, TEN_DOLLARS, account.number, ACCOUNT_2)
         def expectedBlockedMoney = TEN_DOLLARS
         def events = account.eventsAndFlush.asJava()
@@ -65,11 +64,11 @@ class AccountTest extends Specification {
         account.commissionTransferTo ACCOUNT_2, TEN_DOLLARS
 
         when:
-        def pendingTransferRefNumber = account.pendingTransfersReferenceNumbers.head()
+        def pendingTransferRefNumber = account.pendingTransfers.head()
         account.confirmTransfer pendingTransferRefNumber
 
         then:
-        account.pendingTransfersReferenceNumbers.size() == 0
+        account.pendingTransfers.size() == 0
         account.balance == TEN_DOLLARS
     }
 
@@ -80,11 +79,11 @@ class AccountTest extends Specification {
         account.commissionTransferTo ACCOUNT_2, TEN_DOLLARS
 
         when:
-        def pendingTransferRefNumber = account.pendingTransfersReferenceNumbers.head()
+        def pendingTransferRefNumber = account.pendingTransfers.head()
         account.rejectTransfer pendingTransferRefNumber
 
         then:
-        account.pendingTransfersReferenceNumbers.size() == 0
+        account.pendingTransfers.size() == 0
         account.balance == TWENTY_DOLLARS
     }
 
@@ -98,7 +97,7 @@ class AccountTest extends Specification {
         account.receiveTransfer(transfer)
 
         then:
-        account.pendingTransfersReferenceNumbers.size() == 0
+        account.pendingTransfers.size() == 0
         account.balance == TEN_DOLLARS
 
         def events = account.eventsAndFlush.asJava()
@@ -118,7 +117,7 @@ class AccountTest extends Specification {
         account.receiveTransfer(transfer)
 
         then:
-        account.pendingTransfersReferenceNumbers.size() == 0
+        account.pendingTransfers.size() == 0
         account.balance == Money.zero(USD)
 
         def events = account.eventsAndFlush.asJava()
@@ -127,18 +126,46 @@ class AccountTest extends Specification {
         events.head() != null
     }
 
+    def "should reject transfer with a different currency"() {
+        given:
+        def usdAccount = newUSDAccount()
+        def tenEuro = Money.of(EUR, 10)
 
-    def newUSDAccount(AccountIdentifier id = generate(), AccountNumber accountNumber = new AccountNumber("01"),
-                      CurrencyExchanger currencyExchanger = new IdentityCurrencyExchanger()) {
-        new Account(id, accountNumber, USD, currencyExchanger)
+        when:
+        def eurTransfer = MoneyTransfer.generateMoneyTransfer(tenEuro, ACCOUNT_2, usdAccount.number)
+        usdAccount.receiveTransfer(eurTransfer)
+
+        then:
+        thrown IllegalStateException
     }
 
-    class IdentityCurrencyExchanger implements CurrencyExchanger {
+    def "should reject deposit with a different currency"() {
+        given:
+        def usdAccount = newUSDAccount()
+        def tenEuro = Money.of(EUR, 10)
 
-        @Override
-        Money exchange(Money money, CurrencyUnit currencyUnit) {
-            return Money.of(currencyUnit, money.amount)
-        }
+        when:
+        usdAccount.depositMoney(tenEuro)
+
+        then:
+        thrown IllegalStateException
+    }
+
+    def "should reject commissioning transfer with a different currency"() {
+        given:
+        def usdAccount = newUSDAccount()
+        usdAccount.depositMoney(TWENTY_DOLLARS)
+        def tenEuro = Money.of(EUR, 10)
+
+        when:
+        usdAccount.commissionTransferTo(ACCOUNT_2, tenEuro)
+
+        then:
+        thrown IllegalStateException
+    }
+
+    def newUSDAccount(AccountIdentifier id = generate(), AccountNumber accountNumber = new AccountNumber("01")) {
+        new Account(id, accountNumber, USD)
     }
 
 }

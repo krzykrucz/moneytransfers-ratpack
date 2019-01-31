@@ -1,4 +1,4 @@
-package com.krzykrucz.transfers.domain;
+package com.krzykrucz.transfers.domain.common;
 
 import com.krzykrucz.transfers.application.api.handlers.internal.DomainEventHandler;
 
