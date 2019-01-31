@@ -19,6 +19,7 @@ public class DomainExceptionHandler implements ServerErrorHandler {
 
     private void handleError(Throwable throwable, Context ctx) {
         Match(throwable).of(
+                // TODO create domain exception
                 Case($(instanceOf(IllegalArgumentException.class)), ex -> run(() -> sendBadRequest(ex, ctx))),
                 Case($(instanceOf(IllegalStateException.class)), ex -> run(() -> sendBadRequest(ex, ctx))),
                 Case($(), ex -> run(() -> sendServerError(ex, ctx)))

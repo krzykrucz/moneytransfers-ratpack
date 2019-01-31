@@ -1,4 +1,4 @@
-package com.krzykrucz.transfers.infrastructure;
+package com.krzykrucz.transfers.infrastructure.exchanger;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
 
+// TODO remove
 public class ExternalCurrencyExchanger implements CurrencyExchanger {
 
     private static final String EXTERNAL_EXCHANGE_RATE_API_URL = "https://api.exchangeratesapi.io/latest?base=%s";

@@ -1,7 +1,6 @@
 package com.krzykrucz.transfers
 
-import com.krzykrucz.transfers.MoneyTransfersApplication
-import com.krzykrucz.transfers.infrastructure.ExternalCurrencyExchanger
+import com.krzykrucz.transfers.domain.CurrencyExchanger
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.joda.money.Money
@@ -22,7 +21,7 @@ class TransfersEndToEndTest extends Specification {
 
     def httpResponseCodes = []
 
-    MainClassApplicationUnderTest app = new TestApplicationWithMockedServices(MoneyTransfersApplication)
+    MainClassApplicationUnderTest app = new com.krzykrucz.transfers.TestApplicationWithMockedServices(MoneyTransfersApplication)
 
     def cleanup() {
         app.close()
@@ -92,7 +91,7 @@ class TransfersEndToEndTest extends Specification {
         account.balance.pretty
     }
 
-    def "mocked currency exchanger"(ExternalCurrencyExchanger exchanger) {
+    def "mocked currency exchanger"(CurrencyExchanger exchanger) {
         app = new TestApplicationWithMockedServices(MoneyTransfersApplication, exchanger)
     }
 

@@ -1,19 +1,20 @@
-package com.krzykrucz.transfers;
+package com.krzykrucz.transfers.infrastructure.guice;
 
 import com.google.inject.AbstractModule;
-import com.krzykrucz.transfers.application.api.CreateAccountHandler;
-import com.krzykrucz.transfers.application.TransferEventHandler;
+import com.google.inject.multibindings.Multibinder;
 import com.krzykrucz.transfers.application.TransfersApplicationService;
-import com.krzykrucz.transfers.application.api.DepositMoneyHandler;
-import com.krzykrucz.transfers.application.api.GetAccountHandler;
-import com.krzykrucz.transfers.application.api.TransferCommandHandler;
+import com.krzykrucz.transfers.application.api.handlers.CreateAccountHandler;
+import com.krzykrucz.transfers.application.api.handlers.DepositMoneyHandler;
+import com.krzykrucz.transfers.application.api.handlers.GetAccountHandler;
+import com.krzykrucz.transfers.application.api.handlers.TransferCommandHandler;
+import com.krzykrucz.transfers.application.api.handlers.internal.DomainEventHandler;
+import com.krzykrucz.transfers.application.api.handlers.internal.TransferInternalEventHandler;
 import com.krzykrucz.transfers.domain.CurrencyExchanger;
 import com.krzykrucz.transfers.domain.DomainEventPublisher;
-import com.krzykrucz.transfers.domain.EventHandler;
 import com.krzykrucz.transfers.domain.account.AccountRepository;
-import com.krzykrucz.transfers.infrastructure.ExternalCurrencyExchanger;
-import com.krzykrucz.transfers.infrastructure.InMemoryAccountRepository;
-import com.google.inject.multibindings.Multibinder;
+import com.krzykrucz.transfers.infrastructure.events.DomainEventPublisherImpl;
+import com.krzykrucz.transfers.infrastructure.exchanger.IdentityCurrencyExchanger;
+import com.krzykrucz.transfers.infrastructure.persistence.InMemoryAccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
@@ -24,9 +25,9 @@ public class Config extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(DomainEventPublisher.class);
-        bind(EventHandler.class).to(TransferEventHandler.class).asEagerSingleton();
-        bind(ExternalCurrencyExchanger.class);
+        bind(DomainEventPublisher.class).to(DomainEventPublisherImpl.class).asEagerSingleton();
+        bind(DomainEventHandler.class).to(TransferInternalEventHandler.class).asEagerSingleton();
+        bind(CurrencyExchanger.class).to(IdentityCurrencyExchanger.class);
         bind(AccountRepository.class).to(InMemoryAccountRepository.class);
         bind(TransfersApplicationService.class);
         bind(TransferCommandHandler.class);

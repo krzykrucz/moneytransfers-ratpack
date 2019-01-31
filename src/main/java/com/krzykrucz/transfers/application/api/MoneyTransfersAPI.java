@@ -1,5 +1,9 @@
 package com.krzykrucz.transfers.application.api;
 
+import com.krzykrucz.transfers.application.api.handlers.CreateAccountHandler;
+import com.krzykrucz.transfers.application.api.handlers.DepositMoneyHandler;
+import com.krzykrucz.transfers.application.api.handlers.GetAccountHandler;
+import com.krzykrucz.transfers.application.api.handlers.TransferCommandHandler;
 import com.krzykrucz.transfers.application.error.DomainExceptionHandler;
 import ratpack.error.ServerErrorHandler;
 import ratpack.func.Action;

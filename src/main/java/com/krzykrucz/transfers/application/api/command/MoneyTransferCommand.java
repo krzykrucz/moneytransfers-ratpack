@@ -14,6 +14,8 @@ import org.joda.money.Money;
 @AllArgsConstructor
 public class MoneyTransferCommand {
 
+    //TODO request id for idempotency
+
     private String from;
 
     private String to;

@@ -1,10 +1,10 @@
 package com.krzykrucz.transfers
 
-import com.krzykrucz.transfers.infrastructure.ExternalCurrencyExchanger
+import com.krzykrucz.transfers.domain.CurrencyExchanger
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 
-class ThrowingExternalCurrencyExchanger extends ExternalCurrencyExchanger {
+class ThrowingExternalCurrencyExchanger implements CurrencyExchanger {
     String text
 
     private ThrowingExternalCurrencyExchanger(String text) {

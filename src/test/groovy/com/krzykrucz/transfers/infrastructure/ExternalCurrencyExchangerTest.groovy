@@ -1,7 +1,7 @@
-package com.krzykrucz.transfers.domain
+package com.krzykrucz.transfers.infrastructure
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.krzykrucz.transfers.infrastructure.ExternalCurrencyExchanger
+import com.krzykrucz.transfers.infrastructure.exchanger.ExternalCurrencyExchanger
 import org.apache.http.HttpEntity
 import org.apache.http.HttpResponse
 import org.apache.http.client.HttpClient

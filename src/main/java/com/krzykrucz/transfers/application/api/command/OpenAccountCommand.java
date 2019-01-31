@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.joda.money.CurrencyUnit;
 
 @AllArgsConstructor
-@Data
+@Data // todo private setters
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OpenAccountCommand {
 

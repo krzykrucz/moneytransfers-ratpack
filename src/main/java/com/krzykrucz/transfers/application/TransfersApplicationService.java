@@ -4,9 +4,8 @@ package com.krzykrucz.transfers.application;
 import com.krzykrucz.transfers.application.api.command.DepositMoneyCommand;
 import com.krzykrucz.transfers.application.api.command.MoneyTransferCommand;
 import com.krzykrucz.transfers.application.api.command.OpenAccountCommand;
+import com.krzykrucz.transfers.domain.CurrencyExchanger;
 import com.krzykrucz.transfers.domain.account.*;
-import com.krzykrucz.transfers.infrastructure.ExternalCurrencyExchanger;
-import org.joda.money.Money;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,12 +15,12 @@ public class TransfersApplicationService {
 
     private final AccountRepository accountRepository;
 
-    private final ExternalCurrencyExchanger externalCurrencyExchanger;
+    private final CurrencyExchanger currencyExchanger;
 
     @Inject
-    public TransfersApplicationService(AccountRepository accountRepository, ExternalCurrencyExchanger externalCurrencyExchanger) {
+    public TransfersApplicationService(AccountRepository accountRepository, CurrencyExchanger externalCurrencyExchanger) {
         this.accountRepository = accountRepository;
-        this.externalCurrencyExchanger = externalCurrencyExchanger;
+        this.currencyExchanger = externalCurrencyExchanger;
     }
 
     public void transfer(MoneyTransferCommand moneyTransferCommand) {
@@ -35,8 +34,9 @@ public class TransfersApplicationService {
                 AccountIdentifier.generate(),
                 openAccountCommand.getAccountNumber(),
                 openAccountCommand.getCurrency(),
-                externalCurrencyExchanger
+                currencyExchanger
         );
+        // TODO use saveIfAbsent for idempotency
         accountRepository.save(newAccount);
     }
 

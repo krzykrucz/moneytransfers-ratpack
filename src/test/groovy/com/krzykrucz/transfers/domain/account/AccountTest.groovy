@@ -1,6 +1,9 @@
 package com.krzykrucz.transfers.domain.account
 
 import com.krzykrucz.transfers.domain.CurrencyExchanger
+import com.krzykrucz.transfers.domain.account.event.MoneyTransferAccepted
+import com.krzykrucz.transfers.domain.account.event.MoneyTransferCommissioned
+import com.krzykrucz.transfers.domain.account.event.MoneyTransferRejected
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import spock.lang.Specification

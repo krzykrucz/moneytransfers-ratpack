@@ -8,8 +8,9 @@ import org.joda.money.Money;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Setter
+@Setter // todo private
 public class DepositMoneyCommand {
+    //TODO request id for idempotency
 
     @Getter
     @JsonDeserialize(using = MoneyDeserializer.class)

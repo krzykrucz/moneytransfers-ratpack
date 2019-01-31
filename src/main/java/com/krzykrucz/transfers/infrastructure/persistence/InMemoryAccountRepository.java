@@ -1,4 +1,4 @@
-package com.krzykrucz.transfers.infrastructure;
+package com.krzykrucz.transfers.infrastructure.persistence;
 
 import com.google.common.collect.Maps;
 import com.krzykrucz.transfers.domain.DomainEvent;
@@ -13,6 +13,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkState;
 
 @Singleton
+// TODO implement optimistic locks
 public class InMemoryAccountRepository implements AccountRepository {
 
     private final DomainEventPublisher eventPublisher;

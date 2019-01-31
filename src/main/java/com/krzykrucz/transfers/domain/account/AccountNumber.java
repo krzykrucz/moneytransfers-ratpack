@@ -1,7 +1,6 @@
 package com.krzykrucz.transfers.domain.account;
 
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.regex.Pattern;
 

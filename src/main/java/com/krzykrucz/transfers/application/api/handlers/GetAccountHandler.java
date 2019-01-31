@@ -1,8 +1,12 @@
-package com.krzykrucz.transfers.application.api;
+package com.krzykrucz.transfers.application.api.handlers;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.krzykrucz.transfers.application.jackson.MoneySerializer;
 import com.krzykrucz.transfers.domain.account.Account;
 import com.krzykrucz.transfers.domain.account.AccountNumber;
 import com.krzykrucz.transfers.domain.account.AccountRepository;
+import lombok.Getter;
+import org.joda.money.Money;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
 
@@ -27,5 +31,21 @@ public class GetAccountHandler implements Handler {
         final Account account = accountRepository.findByAccountNumber(accountNumber);
         final AccountInfo accountInfo = new AccountInfo(account);
         ctx.render(json(accountInfo));
+    }
+
+    @Getter
+    private class AccountInfo {
+
+        private final String accountNumber;
+
+        @JsonSerialize(using = MoneySerializer.class)
+        private final Money balance;
+
+        AccountInfo(Account account) {
+            this.accountNumber = account.getNumber().toString();
+            this.balance = account.getBalance();
+        }
+
+
     }
 }

@@ -1,11 +1,11 @@
-package com.krzykrucz.transfers.application;
+package com.krzykrucz.transfers.application.api.handlers.internal;
 
+import com.krzykrucz.transfers.application.TransfersApplicationService;
 import com.krzykrucz.transfers.domain.DomainEvent;
 import com.krzykrucz.transfers.domain.DomainEventPublisher;
-import com.krzykrucz.transfers.domain.EventHandler;
-import com.krzykrucz.transfers.domain.account.MoneyTransferAccepted;
-import com.krzykrucz.transfers.domain.account.MoneyTransferCommissioned;
-import com.krzykrucz.transfers.domain.account.MoneyTransferRejected;
+import com.krzykrucz.transfers.domain.account.event.MoneyTransferAccepted;
+import com.krzykrucz.transfers.domain.account.event.MoneyTransferCommissioned;
+import com.krzykrucz.transfers.domain.account.event.MoneyTransferRejected;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,13 +14,12 @@ import static io.vavr.API.*;
 import static io.vavr.Predicates.instanceOf;
 
 @Singleton
-public class TransferEventHandler implements EventHandler {
+public class TransferInternalEventHandler implements DomainEventHandler {
 
     private final TransfersApplicationService transfersApplicationService;
 
-
     @Inject
-    public TransferEventHandler(DomainEventPublisher domainEventPublisher, TransfersApplicationService transfersApplicationService) {
+    public TransferInternalEventHandler(DomainEventPublisher domainEventPublisher, TransfersApplicationService transfersApplicationService) {
         this.transfersApplicationService = transfersApplicationService;
         domainEventPublisher.subscribe(this);
     }
@@ -47,6 +46,7 @@ public class TransferEventHandler implements EventHandler {
         transfersApplicationService.acceptTransfer(domainEvent.getTransferReferenceNumber());
     }
 
+    // TODO review thoroughly
     private Void runAsync(Runnable runnable) {
         runnable.run();
         return null;

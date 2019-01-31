@@ -1,4 +1,4 @@
-package com.krzykrucz.transfers.application.api;
+package com.krzykrucz.transfers.application.api.handlers;
 
 import com.google.inject.Singleton;
 import com.krzykrucz.transfers.application.TransfersApplicationService;

@@ -1,11 +1,13 @@
 package com.krzykrucz.transfers.domain.account;
 
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode
 public class AccountIdentifier {
 
     private final UUID uuid;

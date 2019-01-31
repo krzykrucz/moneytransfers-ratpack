@@ -1,6 +1,6 @@
 package com.krzykrucz.transfers
 
-import com.krzykrucz.transfers.infrastructure.ExternalCurrencyExchanger
+import com.krzykrucz.transfers.domain.CurrencyExchanger
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import ratpack.guice.BindingsImposition
@@ -15,7 +15,7 @@ class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
         super(mainClass)
     }
 
-    TestApplicationWithMockedServices(Class<?> mainClass, ExternalCurrencyExchanger exchanger) {
+    TestApplicationWithMockedServices(Class<?> mainClass, CurrencyExchanger exchanger) {
         super(mainClass)
         this.exchanger = exchanger
     }
@@ -23,11 +23,11 @@ class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
     @Override
     protected void addImpositions(ImpositionsSpec impositions) {
         impositions.add(BindingsImposition.of {
-            it.bindInstance(ExternalCurrencyExchanger.class, this.exchanger)
+            it.bindInstance(CurrencyExchanger.class, this.exchanger)
         })
     }
 
-    class NoOpCurrencyExchanger extends ExternalCurrencyExchanger {
+    class NoOpCurrencyExchanger implements CurrencyExchanger {
         @Override
         Money exchange(Money money, CurrencyUnit targetCurrencyUnit) {
             Money.of(targetCurrencyUnit, money.amount)
