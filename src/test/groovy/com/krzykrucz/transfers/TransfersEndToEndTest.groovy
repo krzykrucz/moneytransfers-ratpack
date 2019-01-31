@@ -88,6 +88,18 @@ class TransfersEndToEndTest extends Specification {
         'all responses are' 400
     }
 
+    def "should return 400 for money shortage"() {
+        given:
+        'account created' '01', 'USD'
+        'account created' '02', 'USD'
+
+        when:
+        def response = money(TEN_DOLLARS).transfered('01', '02')
+
+        then:
+        response.statusCode == 400
+    }
+
     def "should return 500 for unknown error"() {
         given:
         'mocked currency exchanger' ThrowingExternalCurrencyExchanger.withExceptionText('error')

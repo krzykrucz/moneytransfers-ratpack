@@ -1,7 +1,10 @@
 package com.krzykrucz.transfers.infrastructure.persistence;
 
 import com.google.common.collect.Maps;
-import com.krzykrucz.transfers.domain.account.*;
+import com.krzykrucz.transfers.domain.account.Account;
+import com.krzykrucz.transfers.domain.account.AccountNumber;
+import com.krzykrucz.transfers.domain.account.AccountRepository;
+import com.krzykrucz.transfers.domain.account.TransferReferenceNumber;
 import com.krzykrucz.transfers.domain.common.DomainEvent;
 import com.krzykrucz.transfers.domain.common.DomainEventPublisher;
 import io.vavr.collection.List;
@@ -10,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.krzykrucz.transfers.domain.common.DomainException.checkDomainState;
 
 @Singleton
 // TODO implement optimistic locks
@@ -18,7 +21,6 @@ public class InMemoryAccountRepository implements AccountRepository {
 
     private final DomainEventPublisher eventPublisher;
 
-    private final Map<AccountIdentifier, Account> accounts = Maps.newConcurrentMap();
     private final Map<AccountNumber, Account> accountsByNumber = Maps.newConcurrentMap();
     private final Map<TransferReferenceNumber, Account> accountsByTransfer = Maps.newConcurrentMap();
 
@@ -30,7 +32,6 @@ public class InMemoryAccountRepository implements AccountRepository {
     @Override
     public void save(Account account) {
         final List<DomainEvent> events = account.getEventsAndFlush();
-        accounts.put(account.getId(), account);
         accountsByNumber.put(account.getNumber(), account);
         account.getPendingTransfers()
                 .forEach(transferRefNumber -> accountsByTransfer.put(transferRefNumber, account));
@@ -38,20 +39,15 @@ public class InMemoryAccountRepository implements AccountRepository {
     }
 
     @Override
-    public Account findOne(AccountIdentifier accountIdentifier) {
-        checkState(accounts.containsKey(accountIdentifier), "Account not found");
-        return accounts.get(accountIdentifier);
-    }
-
-    @Override
     public Account findByTransfer(TransferReferenceNumber transferReferenceNumber) {
-        checkState(accountsByTransfer.containsKey(transferReferenceNumber), "Account not found");
+        checkDomainState(accountsByTransfer.containsKey(transferReferenceNumber), "Account not found");
         return accountsByTransfer.get(transferReferenceNumber);
     }
 
     @Override
     public Account findByAccountNumber(AccountNumber accountNumber) {
-        checkState(accountsByNumber.containsKey(accountNumber), "Account not found");
+        checkDomainState(accountsByNumber.containsKey(accountNumber), "Account not found");
         return accountsByNumber.get(accountNumber);
     }
+
 }

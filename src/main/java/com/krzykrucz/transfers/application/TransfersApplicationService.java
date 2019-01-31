@@ -31,10 +31,6 @@ public class TransfersApplicationService {
         accountRepository.save(account);
     }
 
-    private Money exchange(Money value, Account account) {
-        return currencyExchanger.exchangeIfNecessary(value, account.getCurrency());
-    }
-
     public void openAccount(OpenAccountCommand openAccountCommand) {
         final Account newAccount = new Account(
                 AccountIdentifier.generate(),

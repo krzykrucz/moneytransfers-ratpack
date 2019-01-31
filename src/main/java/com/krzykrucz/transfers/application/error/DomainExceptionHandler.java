@@ -1,5 +1,6 @@
 package com.krzykrucz.transfers.application.error;
 
+import com.krzykrucz.transfers.domain.common.DomainException;
 import ratpack.error.ServerErrorHandler;
 import ratpack.handling.Context;
 import ratpack.http.Status;
@@ -19,9 +20,7 @@ public class DomainExceptionHandler implements ServerErrorHandler {
 
     private void handleError(Throwable throwable, Context ctx) {
         Match(throwable).of(
-                // TODO create domain exception
-                Case($(instanceOf(IllegalArgumentException.class)), ex -> run(() -> sendBadRequest(ex, ctx))),
-                Case($(instanceOf(IllegalStateException.class)), ex -> run(() -> sendBadRequest(ex, ctx))),
+                Case($(instanceOf(DomainException.class)), ex -> run(() -> sendBadRequest(ex, ctx))),
                 Case($(), ex -> run(() -> sendServerError(ex, ctx)))
         );
     }

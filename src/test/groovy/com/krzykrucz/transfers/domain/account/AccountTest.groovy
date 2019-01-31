@@ -3,6 +3,7 @@ package com.krzykrucz.transfers.domain.account
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferAccepted
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferCommissioned
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferRejected
+import com.krzykrucz.transfers.domain.common.DomainException
 import org.joda.money.Money
 import spock.lang.Specification
 
@@ -136,7 +137,7 @@ class AccountTest extends Specification {
         usdAccount.receiveTransfer(eurTransfer)
 
         then:
-        thrown IllegalStateException
+        thrown DomainException
     }
 
     def "should reject deposit with a different currency"() {
@@ -148,7 +149,7 @@ class AccountTest extends Specification {
         usdAccount.depositMoney(tenEuro)
 
         then:
-        thrown IllegalStateException
+        thrown DomainException
     }
 
     def "should reject commissioning transfer with a different currency"() {
@@ -161,7 +162,7 @@ class AccountTest extends Specification {
         usdAccount.commissionTransferTo(ACCOUNT_2, tenEuro)
 
         then:
-        thrown IllegalStateException
+        thrown DomainException
     }
 
     def newUSDAccount(AccountIdentifier id = generate(), AccountNumber accountNumber = new AccountNumber("01")) {

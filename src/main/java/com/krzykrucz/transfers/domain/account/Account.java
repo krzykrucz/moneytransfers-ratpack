@@ -12,7 +12,7 @@ import lombok.Getter;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.krzykrucz.transfers.domain.common.DomainException.checkDomainState;
 
 @EqualsAndHashCode(of = "id", callSuper = true)
 // TODO make immutable
@@ -29,14 +29,10 @@ public class Account extends Aggregate { // TODO extend aggregate root
 
     @Getter
     private final CurrencyUnit currency;
-
+    private final TransferReceiveLimitPolicy transferReceiveLimit;
+    private final AccountDomainValidator validator;
     @Getter
     private Money balance;
-
-    private final TransferReceiveLimitPolicy transferReceiveLimit;
-
-    private final AccountDomainValidator validator;
-
     // TODO enclose with a value object
     private Map<TransferReferenceNumber, Money> moneyBlockedOnTransfers;
 
@@ -101,20 +97,20 @@ public class Account extends Aggregate { // TODO extend aggregate root
     private class AccountDomainValidator {
         private void validateIncomingTransfer(MoneyTransfer transfer) {
             checkCurrency(transfer.getValue());
-            checkState(transfer.getTo().equals(number), "Received transfer for a different account");
+            checkDomainState(transfer.getTo().equals(number), "Received transfer for a different account");
         }
 
         private void validateOutcomingTransfer(Money transferValue) {
             checkCurrency(transferValue);
-            checkState(!balance.isLessThan(transferValue), "Not enough money on account to do a transfer");
+            checkDomainState(!balance.isLessThan(transferValue), "Not enough money on account to do a transfer");
         }
 
         private void checkCurrency(Money money) {
-            checkState(money.getCurrencyUnit().equals(currency), "Received a transfer with a different currency");
+            checkDomainState(money.getCurrencyUnit().equals(currency), "Received a transfer with a different currency");
         }
 
         private void checkExists(TransferReferenceNumber transferReferenceNumber) {
-            checkState(moneyBlockedOnTransfers.keySet()
+            checkDomainState(moneyBlockedOnTransfers.keySet()
                             .contains(transferReferenceNumber),
                     "No pending transfer with that reference"
             );
