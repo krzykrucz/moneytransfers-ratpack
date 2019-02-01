@@ -8,7 +8,9 @@ import com.krzykrucz.transfers.application.api.handlers.DepositMoneyHandler;
 import com.krzykrucz.transfers.application.api.handlers.GetAccountHandler;
 import com.krzykrucz.transfers.application.api.handlers.TransferCommandHandler;
 import com.krzykrucz.transfers.application.api.handlers.internal.DomainEventHandler;
-import com.krzykrucz.transfers.application.api.handlers.internal.TransferInternalEventHandler;
+import com.krzykrucz.transfers.application.api.handlers.internal.MoneyTransferAcceptedHandler;
+import com.krzykrucz.transfers.application.api.handlers.internal.MoneyTransferCommissionedHandler;
+import com.krzykrucz.transfers.application.api.handlers.internal.MoneyTransferRejectedHandler;
 import com.krzykrucz.transfers.domain.CurrencyExchanger;
 import com.krzykrucz.transfers.domain.account.AccountRepository;
 import com.krzykrucz.transfers.domain.common.DomainEventPublisher;
@@ -26,7 +28,13 @@ public class Config extends AbstractModule {
     @Override
     protected void configure() {
         bind(DomainEventPublisher.class).to(DomainEventPublisherImpl.class).asEagerSingleton();
-        bind(DomainEventHandler.class).to(TransferInternalEventHandler.class).asEagerSingleton();
+
+        Multibinder<DomainEventHandler> eventHandlerMultibinder =
+                Multibinder.newSetBinder(binder(), DomainEventHandler.class);
+        eventHandlerMultibinder.addBinding().to(MoneyTransferCommissionedHandler.class);
+        eventHandlerMultibinder.addBinding().to(MoneyTransferAcceptedHandler.class);
+        eventHandlerMultibinder.addBinding().to(MoneyTransferRejectedHandler.class);
+
         bind(CurrencyExchanger.class).to(IdentityCurrencyExchanger.class);
         bind(AccountRepository.class).to(InMemoryAccountRepository.class);
         bind(TransfersApplicationService.class);

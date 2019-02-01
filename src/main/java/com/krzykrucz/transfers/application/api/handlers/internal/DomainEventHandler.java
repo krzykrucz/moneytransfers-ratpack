@@ -2,9 +2,8 @@ package com.krzykrucz.transfers.application.api.handlers.internal;
 
 import com.krzykrucz.transfers.domain.common.DomainEvent;
 
-@FunctionalInterface
-public interface DomainEventHandler {
+public interface DomainEventHandler<E extends DomainEvent> {
 
-    void handle(DomainEvent domainEvent);
+    void handle(E domainEvent);
 
 }

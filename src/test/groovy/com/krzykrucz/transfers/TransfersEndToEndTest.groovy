@@ -16,6 +16,7 @@ class TransfersEndToEndTest extends Specification {
     final def TEN_DOLLARS = Money.of USD, 10
     final def TEN_EURO = Money.of EUR, 10
     final def THIRTY_DOLLARS = Money.of USD, 30
+    final def USD_15_000 = Money.of USD, 15000
     final def THIRTY_EURO = Money.of EUR, 30
 
     def jsonParser = new JsonSlurper()
@@ -51,6 +52,22 @@ class TransfersEndToEndTest extends Specification {
         then:
         'balance of account'('01') == '$20.00'
         'balance of account'('02') == '$40.00'
+        and:
+        'all responses are' 200
+    }
+
+    def "should reject transfer"() {
+        given:
+        'account created' '01', 'USD'
+        'account created' '02', 'USD'
+        money USD_15_000 'deposited on account' '01'
+
+        when:
+        money(USD_15_000).transfered('01', '02')
+
+        then:
+        'balance of account'('01') == '$15000.00'
+        'balance of account'('02') == '$0.00'
         and:
         'all responses are' 200
     }
