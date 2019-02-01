@@ -12,11 +12,12 @@ import io.vavr.collection.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.krzykrucz.transfers.domain.common.DomainException.checkDomainState;
 
 @Singleton
-// TODO implement optimistic locks
 public class InMemoryAccountRepository implements AccountRepository {
 
     private final DomainEventPublisher eventPublisher;
@@ -31,23 +32,42 @@ public class InMemoryAccountRepository implements AccountRepository {
 
     @Override
     public void save(Account account) {
-        final List<DomainEvent> events = account.getEventsAndFlush();
+        checkConcurrentModification(account);
+
+        final List<DomainEvent> events = account.finishModification();
+
         accountsByNumber.put(account.getNumber(), account);
         account.getPendingTransfers()
                 .forEach(transferRefNumber -> accountsByTransfer.put(transferRefNumber, account));
+
         events.forEach(eventPublisher::publish);
+    }
+
+    private void checkConcurrentModification(Account account) {
+        final AccountNumber number = account.getNumber();
+        final Predicate<Account> accountsDifferentVersions =
+                persistedAccount -> !persistedAccount.hasSameVersionAs(account.getVersion());
+        Optional.ofNullable(accountsByNumber.get(number))
+                .filter(accountsDifferentVersions)
+                .ifPresent(persistedAccount -> {
+                    throw new OptimisticLockException();
+                });
     }
 
     @Override
     public Account findByTransfer(TransferReferenceNumber transferReferenceNumber) {
         checkDomainState(accountsByTransfer.containsKey(transferReferenceNumber), "Account not found");
-        return accountsByTransfer.get(transferReferenceNumber);
+
+        final Account account = accountsByTransfer.get(transferReferenceNumber);
+        return account.copy();
     }
 
     @Override
     public Account findByAccountNumber(AccountNumber accountNumber) {
         checkDomainState(accountsByNumber.containsKey(accountNumber), "Account not found");
-        return accountsByNumber.get(accountNumber);
+
+        final Account account = accountsByNumber.get(accountNumber);
+        return account.copy();
     }
 
 }

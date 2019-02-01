@@ -19,8 +19,6 @@ import static com.krzykrucz.transfers.domain.common.DomainException.checkDomainS
 // TODO ensure idempotency (test)
 public class Account extends Aggregate { // TODO extend aggregate root
 
-    // TODO handle versions
-
     @Getter
     private final AccountIdentifier id;
 
@@ -37,6 +35,7 @@ public class Account extends Aggregate { // TODO extend aggregate root
     private Map<TransferReferenceNumber, Money> moneyBlockedOnTransfers;
 
     public Account(AccountIdentifier id, AccountNumber number, CurrencyUnit currency) {
+        super(0);
         this.id = id;
         this.balance = Money.zero(currency);
         this.currency = currency;
@@ -44,6 +43,19 @@ public class Account extends Aggregate { // TODO extend aggregate root
         this.moneyBlockedOnTransfers = HashMap.empty();
         this.transferReceiveLimit = new TransferReceiveLimitPolicy(currency);
         this.validator = new AccountDomainValidator();
+    }
+
+    private Account(long version, AccountIdentifier id, AccountNumber number, CurrencyUnit currency,
+                    TransferReceiveLimitPolicy transferReceiveLimit, AccountDomainValidator validator, Money balance,
+                    Map<TransferReferenceNumber, Money> moneyBlockedOnTransfers) {
+        super(version);
+        this.id = id;
+        this.number = number;
+        this.currency = currency;
+        this.transferReceiveLimit = transferReceiveLimit;
+        this.validator = validator;
+        this.balance = balance;
+        this.moneyBlockedOnTransfers = moneyBlockedOnTransfers;
     }
 
     public void commissionTransferTo(AccountNumber anotherAccount, Money transferValue) {
@@ -92,6 +104,10 @@ public class Account extends Aggregate { // TODO extend aggregate root
 
     public Set<TransferReferenceNumber> getPendingTransfers() {
         return moneyBlockedOnTransfers.keySet();
+    }
+
+    public Account copy() {
+        return new Account(getVersion(), id, number, currency, transferReceiveLimit, validator, balance, moneyBlockedOnTransfers);
     }
 
     private class AccountDomainValidator {

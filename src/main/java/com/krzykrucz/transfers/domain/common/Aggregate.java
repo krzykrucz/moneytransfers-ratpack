@@ -1,10 +1,18 @@
 package com.krzykrucz.transfers.domain.common;
 
 import io.vavr.collection.List;
+import lombok.Getter;
 
 public abstract class Aggregate {
 
     private List<DomainEvent> domainEvents = List.empty();
+
+    @Getter
+    private long version;
+
+    protected Aggregate(long version) {
+        this.version = version;
+    }
 
     public abstract AggregateId getId();
 
@@ -12,9 +20,14 @@ public abstract class Aggregate {
         domainEvents = domainEvents.append(event);
     }
 
-    public List<DomainEvent> getEventsAndFlush() {
+    public boolean hasSameVersionAs(long anotherVersion) {
+        return version == anotherVersion;
+    }
+
+    public List<DomainEvent> finishModification() {
         final List<DomainEvent> eventsCopy = domainEvents;
         domainEvents = List.empty();
+        version++;
         return eventsCopy;
     }
 

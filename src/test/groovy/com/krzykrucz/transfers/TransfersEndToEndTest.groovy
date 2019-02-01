@@ -100,6 +100,19 @@ class TransfersEndToEndTest extends Specification {
         response.statusCode == 400
     }
 
+    def "should return 409 for optimistic lock"() {
+        given:
+        'mocked currency exchanger' ThrowingExternalCurrencyExchanger.withOptimisticLockException()
+        'account created' '01', 'USD'
+
+        when:
+        def response = money THIRTY_EURO 'deposited on account' '01'
+
+        then:
+        response.statusCode == 409
+        response.body.text == 'Conflict modifying multiple accounts at the same time'
+    }
+
     def "should return 500 for unknown error"() {
         given:
         'mocked currency exchanger' ThrowingExternalCurrencyExchanger.withExceptionText('error')

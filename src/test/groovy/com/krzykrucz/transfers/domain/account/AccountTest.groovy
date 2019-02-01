@@ -51,7 +51,7 @@ class AccountTest extends Specification {
         def pendingTransfer = account.pendingTransfers.head()
         def expectedTransfer = new MoneyTransfer(pendingTransfer, TEN_DOLLARS, account.number, ACCOUNT_2)
         def expectedBlockedMoney = TEN_DOLLARS
-        def events = account.eventsAndFlush.asJava()
+        def events = account.finishModification.asJava()
 
         events*.class == [MoneyTransferCommissioned]
         events*.moneyTransfer == [expectedTransfer]
@@ -101,7 +101,7 @@ class AccountTest extends Specification {
         account.pendingTransfers.size() == 0
         account.balance == TEN_DOLLARS
 
-        def events = account.eventsAndFlush.asJava()
+        def events = account.finishModification.asJava()
 
         events*.class == [MoneyTransferAccepted]
         events.head() != null
@@ -121,7 +121,7 @@ class AccountTest extends Specification {
         account.pendingTransfers.size() == 0
         account.balance == Money.zero(USD)
 
-        def events = account.eventsAndFlush.asJava()
+        def events = account.finishModification.asJava()
 
         events*.class == [MoneyTransferRejected]
         events.head() != null
