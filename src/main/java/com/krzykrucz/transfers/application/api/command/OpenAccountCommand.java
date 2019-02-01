@@ -1,15 +1,18 @@
 package com.krzykrucz.transfers.application.api.command;
 
 import com.krzykrucz.transfers.domain.account.AccountNumber;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.joda.money.CurrencyUnit;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @AllArgsConstructor
-@Data // todo private setters
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+@Setter(value = PRIVATE)
+@NoArgsConstructor(access = PRIVATE)
 public class OpenAccountCommand {
 
     private String accountNumber;

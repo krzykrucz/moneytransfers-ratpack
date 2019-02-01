@@ -3,14 +3,14 @@ package com.krzykrucz.transfers.domain.common;
 import io.vavr.collection.List;
 import lombok.Getter;
 
-public abstract class Aggregate {
+public abstract class AggregateRoot {
 
     private List<DomainEvent> domainEvents = List.empty();
 
     @Getter
     private long version;
 
-    protected Aggregate(long version) {
+    protected AggregateRoot(long version) {
         this.version = version;
     }
 

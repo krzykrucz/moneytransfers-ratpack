@@ -49,9 +49,9 @@ class AccountTest extends Specification {
         account.balance == TEN_DOLLARS
 
         def pendingTransfer = account.pendingTransfers.head()
-        def expectedTransfer = new MoneyTransfer(pendingTransfer, TEN_DOLLARS, account.number, ACCOUNT_2)
+        def expectedTransfer = new MoneyTransfer(pendingTransfer, TEN_DOLLARS, account.accountNumber, ACCOUNT_2)
         def expectedBlockedMoney = TEN_DOLLARS
-        def events = account.finishModification.asJava()
+        def events = account.finishModification().asJava()
 
         events*.class == [MoneyTransferCommissioned]
         events*.moneyTransfer == [expectedTransfer]
@@ -94,14 +94,18 @@ class AccountTest extends Specification {
         def account = newUSDAccount()
 
         when:
-        def transfer = MoneyTransfer.generateMoneyTransfer(TEN_DOLLARS, ACCOUNT_2, account.number)
+        def transfer = MoneyTransfer.generateNewTransfer()
+                .withValue(TEN_DOLLARS)
+                .from(ACCOUNT_2)
+                .to(account.accountNumber)
+                .build()
         account.receiveTransfer(transfer)
 
         then:
         account.pendingTransfers.size() == 0
         account.balance == TEN_DOLLARS
 
-        def events = account.finishModification.asJava()
+        def events = account.finishModification().asJava()
 
         events*.class == [MoneyTransferAccepted]
         events.head() != null
@@ -114,14 +118,18 @@ class AccountTest extends Specification {
         def dollarsBeyondLimit = Money.of(USD, 20000)
 
         when:
-        def transfer = MoneyTransfer.generateMoneyTransfer(dollarsBeyondLimit, ACCOUNT_2, account.number)
+        def transfer = MoneyTransfer.generateNewTransfer()
+                .withValue(dollarsBeyondLimit)
+                .from(ACCOUNT_2)
+                .to(account.accountNumber)
+                .build()
         account.receiveTransfer(transfer)
 
         then:
         account.pendingTransfers.size() == 0
         account.balance == Money.zero(USD)
 
-        def events = account.finishModification.asJava()
+        def events = account.finishModification().asJava()
 
         events*.class == [MoneyTransferRejected]
         events.head() != null
@@ -133,7 +141,11 @@ class AccountTest extends Specification {
         def tenEuro = Money.of(EUR, 10)
 
         when:
-        def eurTransfer = MoneyTransfer.generateMoneyTransfer(tenEuro, ACCOUNT_2, usdAccount.number)
+        def eurTransfer = MoneyTransfer.generateNewTransfer()
+                .withValue(tenEuro)
+                .from(ACCOUNT_2)
+                .to(usdAccount.accountNumber)
+                .build()
         usdAccount.receiveTransfer(eurTransfer)
 
         then:

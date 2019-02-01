@@ -42,7 +42,7 @@ public class GetAccountHandler implements Handler {
         private final Money balance;
 
         AccountInfo(Account account) {
-            this.accountNumber = account.getNumber().toString();
+            this.accountNumber = account.getAccountNumber().toString();
             this.balance = account.getBalance();
         }
 

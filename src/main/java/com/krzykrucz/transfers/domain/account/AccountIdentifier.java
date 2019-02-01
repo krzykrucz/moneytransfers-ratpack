@@ -17,7 +17,4 @@ public class AccountIdentifier implements AggregateId {
         return new AccountIdentifier(UUID.randomUUID());
     }
 
-    public static AccountIdentifier fromExisting(String id) {
-        return new AccountIdentifier(UUID.fromString(id));
-    }
 }

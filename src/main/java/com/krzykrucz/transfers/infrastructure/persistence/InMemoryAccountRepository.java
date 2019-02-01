@@ -36,7 +36,7 @@ public class InMemoryAccountRepository implements AccountRepository {
 
         final List<DomainEvent> events = account.finishModification();
 
-        accountsByNumber.put(account.getNumber(), account);
+        accountsByNumber.put(account.getAccountNumber(), account);
         account.getPendingTransfers()
                 .forEach(transferRefNumber -> accountsByTransfer.put(transferRefNumber, account));
 
@@ -44,7 +44,7 @@ public class InMemoryAccountRepository implements AccountRepository {
     }
 
     private void checkConcurrentModification(Account account) {
-        final AccountNumber number = account.getNumber();
+        final AccountNumber number = account.getAccountNumber();
         final Predicate<Account> accountsDifferentVersions =
                 persistedAccount -> !persistedAccount.hasSameVersionAs(account.getVersion());
         Optional.ofNullable(accountsByNumber.get(number))
