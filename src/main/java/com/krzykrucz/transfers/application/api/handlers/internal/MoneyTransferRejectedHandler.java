@@ -3,6 +3,7 @@ package com.krzykrucz.transfers.application.api.handlers.internal;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.krzykrucz.transfers.application.TransfersApplicationService;
+import com.krzykrucz.transfers.application.api.command.RejectTransferCommand;
 import com.krzykrucz.transfers.domain.account.event.MoneyTransferRejected;
 
 import javax.inject.Inject;
@@ -22,7 +23,7 @@ public class MoneyTransferRejectedHandler implements DomainEventHandler<MoneyTra
     @Subscribe
     @AllowConcurrentEvents
     public void handle(MoneyTransferRejected event) {
-        transfersApplicationService.rejectTransfer(event.getReferenceNumber());
+        transfersApplicationService.rejectTransfer(new RejectTransferCommand(event.getReferenceNumber()));
     }
 
 }

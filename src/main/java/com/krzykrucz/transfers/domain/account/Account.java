@@ -26,7 +26,7 @@ public class Account extends AggregateRoot {
     private final TransferReceiveLimitPolicy transferReceiveLimit;
     @Getter
     private Money balance;
-    private PendingTransfers pendingTransfers;
+    private PendingTransfers pendingOutcomingTransfers;
 
     public Account(AccountIdentifier id, AccountNumber accountNumber, CurrencyUnit currency) {
         super(0);
@@ -34,20 +34,20 @@ public class Account extends AggregateRoot {
         this.balance = Money.zero(currency);
         this.currency = currency;
         this.accountNumber = accountNumber;
-        this.pendingTransfers = PendingTransfers.empty();
+        this.pendingOutcomingTransfers = PendingTransfers.empty();
         this.transferReceiveLimit = new TransferReceiveLimitPolicy(currency);
     }
 
     private Account(long version, AccountIdentifier id, AccountNumber accountNumber, CurrencyUnit currency,
                     TransferReceiveLimitPolicy transferReceiveLimit, Money balance,
-                    PendingTransfers pendingTransfers) {
+                    PendingTransfers pendingOutcomingTransfers) {
         super(version);
         this.id = id;
         this.accountNumber = accountNumber;
         this.currency = currency;
         this.transferReceiveLimit = transferReceiveLimit;
         this.balance = balance;
-        this.pendingTransfers = pendingTransfers;
+        this.pendingOutcomingTransfers = pendingOutcomingTransfers;
     }
 
     public void commissionTransferTo(AccountNumber anotherAccount, Money transferValue) {
@@ -70,7 +70,7 @@ public class Account extends AggregateRoot {
     }
 
     public void rejectTransfer(TransferReferenceNumber transferReferenceNumber) {
-        final Money moneyToAddBack = pendingTransfers.getMoneyBlockedOn(transferReferenceNumber);
+        final Money moneyToAddBack = pendingOutcomingTransfers.getMoneyBlockedOn(transferReferenceNumber);
         removePendingTransfer(transferReferenceNumber);
         increaseBalanceBy(moneyToAddBack);
     }
@@ -93,20 +93,20 @@ public class Account extends AggregateRoot {
         increaseBalanceBy(money);
     }
 
-    public Set<TransferReferenceNumber> getPendingTransfers() {
-        return pendingTransfers.getReferenceNumbers();
+    public Set<TransferReferenceNumber> getPendingOutcomingTransfers() {
+        return pendingOutcomingTransfers.getReferenceNumbers();
     }
 
     public Account copy() {
-        return new Account(getVersion(), id, accountNumber, currency, transferReceiveLimit, balance, pendingTransfers);
+        return new Account(getVersion(), id, accountNumber, currency, transferReceiveLimit, balance, pendingOutcomingTransfers);
     }
 
     private void removePendingTransfer(TransferReferenceNumber transferReferenceNumber) {
-        pendingTransfers = pendingTransfers.removeTransfer(transferReferenceNumber);
+        pendingOutcomingTransfers = pendingOutcomingTransfers.removeTransfer(transferReferenceNumber);
     }
 
     private void beginATransfer(MoneyTransfer transfer) {
-        pendingTransfers = pendingTransfers.addTransfer(transfer);
+        pendingOutcomingTransfers = pendingOutcomingTransfers.addTransfer(transfer);
     }
 
     private void decreaseBalanceBy(Money transferValue) {

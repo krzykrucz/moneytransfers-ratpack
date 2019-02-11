@@ -1,7 +1,7 @@
-package com.krzykrucz.transfers
+package com.krzykrucz.transfers.infrastructure.exchanger
 
+import com.krzykrucz.transfers.application.error.OptimisticLockException
 import com.krzykrucz.transfers.domain.CurrencyExchanger
-import com.krzykrucz.transfers.infrastructure.persistence.OptimisticLockException
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 

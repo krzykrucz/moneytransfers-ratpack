@@ -3,6 +3,7 @@ package com.krzykrucz.transfers.infrastructure.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import com.krzykrucz.transfers.application.TransfersApplicationService;
+import com.krzykrucz.transfers.application.TransfersApplicationServiceImpl;
 import com.krzykrucz.transfers.application.api.handlers.CreateAccountHandler;
 import com.krzykrucz.transfers.application.api.handlers.DepositMoneyHandler;
 import com.krzykrucz.transfers.application.api.handlers.GetAccountHandler;
@@ -22,8 +23,7 @@ import ratpack.handling.Context;
 import ratpack.handling.Handler;
 import ratpack.handling.HandlerDecorator;
 
-
-public class Config extends AbstractModule {
+public class GuiceConfig extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -37,7 +37,7 @@ public class Config extends AbstractModule {
 
         bind(CurrencyExchanger.class).to(IdentityCurrencyExchanger.class);
         bind(AccountRepository.class).to(InMemoryAccountRepository.class);
-        bind(TransfersApplicationService.class);
+        bind(TransfersApplicationService.class).to(TransfersApplicationServiceImpl.class);
         bind(TransferCommandHandler.class);
         bind(CreateAccountHandler.class);
         bind(GetAccountHandler.class);

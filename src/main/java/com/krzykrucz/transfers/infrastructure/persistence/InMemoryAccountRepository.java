@@ -1,6 +1,7 @@
 package com.krzykrucz.transfers.infrastructure.persistence;
 
 import com.google.common.collect.Maps;
+import com.krzykrucz.transfers.application.error.OptimisticLockException;
 import com.krzykrucz.transfers.domain.account.Account;
 import com.krzykrucz.transfers.domain.account.AccountNumber;
 import com.krzykrucz.transfers.domain.account.AccountRepository;
@@ -37,7 +38,7 @@ public class InMemoryAccountRepository implements AccountRepository {
         final List<DomainEvent> events = account.finishModification();
 
         accountsByNumber.put(account.getAccountNumber(), account);
-        account.getPendingTransfers()
+        account.getPendingOutcomingTransfers()
                 .forEach(transferRefNumber -> accountsByTransfer.put(transferRefNumber, account));
 
         events.forEach(eventPublisher::publish);

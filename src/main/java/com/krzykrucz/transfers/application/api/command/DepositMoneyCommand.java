@@ -7,8 +7,8 @@ import lombok.*;
 import org.joda.money.Money;
 
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Setter // todo private
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter(AccessLevel.PRIVATE)
 public class DepositMoneyCommand {
     //TODO request id for idempotency
 
