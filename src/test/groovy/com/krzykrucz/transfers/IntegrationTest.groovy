@@ -3,6 +3,7 @@ package com.krzykrucz.transfers
 import com.krzykrucz.transfers.domain.CurrencyExchanger
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 import org.joda.money.Money
 import ratpack.http.client.RequestSpec
 import ratpack.test.MainClassApplicationUnderTest
@@ -11,6 +12,7 @@ import spock.lang.Specification
 import static org.joda.money.CurrencyUnit.EUR
 import static org.joda.money.CurrencyUnit.USD
 
+@Slf4j
 class IntegrationTest extends Specification {
 
     final def TEN_DOLLARS = Money.of USD, 10
@@ -35,6 +37,9 @@ class IntegrationTest extends Specification {
 
     def "all responses are"(code) {
         def allMatch = httpResponseCodes.stream().allMatch { it == code }
+        if (!allMatch) {
+            log.error("Responses: ${httpResponseCodes}")
+        }
         httpResponseCodes.clear()
         allMatch
     }

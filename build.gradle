@@ -18,6 +18,7 @@ apply plugin: "groovy"
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -32,6 +33,7 @@ dependencies {
     compile 'org.apache.httpcomponents:httpclient:4.5.6'
 
     testCompile "org.spockframework:spock-core:1.2-groovy-2.4"
+    testCompile 'org.spockframework:spock-guice:1.2-groovy-2.4'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.4'
     testCompile 'junit:junit:4.11'
     testCompile 'com.tngtech.archunit:archunit-junit4:0.9.3'

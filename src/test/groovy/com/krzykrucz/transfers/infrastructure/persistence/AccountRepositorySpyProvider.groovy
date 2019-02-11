@@ -11,11 +11,11 @@ class AccountRepositorySpyProvider implements Provider<AccountRepository> {
 
     private final static MOCK_FACTORY = new DetachedMockFactory()
 
-    private final InMemoryAccountRepository accountRepository
+    private final AccountRepository accountRepository
 
     @Inject
-    AccountRepositorySpyProvider(DomainEventPublisher domainEventPublisher) {
-        this.accountRepository = MOCK_FACTORY.Spy(new InMemoryAccountRepository(domainEventPublisher))
+    AccountRepositorySpyProvider(DomainEventPublisher publisher) {
+        this.accountRepository = MOCK_FACTORY.Spy(new InMemoryAccountRepository(publisher))
     }
 
     @Override

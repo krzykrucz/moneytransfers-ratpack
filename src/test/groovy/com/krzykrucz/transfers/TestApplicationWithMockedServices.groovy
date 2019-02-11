@@ -8,10 +8,12 @@ import ratpack.impose.ImpositionsSpec
 import ratpack.impose.UserRegistryImposition
 import ratpack.registry.Registry
 import ratpack.test.MainClassApplicationUnderTest
+import spock.mock.DetachedMockFactory
 
 class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
 
     def exchanger = null
+    def accountRepository = null
 
     Registry appRegistry
 
@@ -24,13 +26,23 @@ class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
         this.exchanger = exchanger
     }
 
+    TestApplicationWithMockedServices(Class<?> mainClass, AccountRepository repository) {
+        super(mainClass)
+        this.accountRepository = repository
+    }
+
     @Override
     protected void addImpositions(ImpositionsSpec impositions) {
         if (exchanger != null) {
             impositions.add(BindingsImposition.of {
-                it.bindInstance(CurrencyExchanger.class, this.exchanger)
+                it.bindInstance(CurrencyExchanger, this.exchanger)
             })
         }
+//        if (accountRepository != null) {
+//            impositions.add(BindingsImposition.of {
+//                it.bindInstance(AccountRepository, this.accountRepository)
+//            })
+//        }
         impositions.add(UserRegistryImposition.of({
             this.appRegistry = it
             Registry.empty()
