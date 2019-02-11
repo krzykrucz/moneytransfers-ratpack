@@ -1,4 +1,4 @@
-package com.krzykrucz.transfers.infrastructure.persistence;
+package com.krzykrucz.transfers.application.error;
 
 public class OptimisticLockException extends RuntimeException {
 

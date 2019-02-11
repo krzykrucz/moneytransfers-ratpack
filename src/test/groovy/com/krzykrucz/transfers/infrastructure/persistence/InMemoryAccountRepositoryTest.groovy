@@ -1,5 +1,6 @@
 package com.krzykrucz.transfers.infrastructure.persistence
 
+import com.krzykrucz.transfers.application.error.OptimisticLockException
 import com.krzykrucz.transfers.domain.account.Account
 import com.krzykrucz.transfers.domain.account.AccountIdentifier
 import com.krzykrucz.transfers.domain.account.AccountNumber

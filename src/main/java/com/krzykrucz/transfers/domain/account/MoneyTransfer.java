@@ -25,7 +25,7 @@ public class MoneyTransfer { // TODO make all values validation - write tests
         this.to = checkNotNull(to, "Transfer destination");
     }
 
-    static Builder generateNewTransfer() {
+    public static Builder generateNewTransfer() {
         return new Builder();
     }
 

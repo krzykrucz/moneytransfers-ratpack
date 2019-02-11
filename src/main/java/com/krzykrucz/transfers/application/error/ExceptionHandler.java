@@ -1,7 +1,6 @@
 package com.krzykrucz.transfers.application.error;
 
 import com.krzykrucz.transfers.domain.common.DomainException;
-import com.krzykrucz.transfers.infrastructure.persistence.OptimisticLockException;
 import ratpack.error.ServerErrorHandler;
 import ratpack.handling.Context;
 import ratpack.http.Status;

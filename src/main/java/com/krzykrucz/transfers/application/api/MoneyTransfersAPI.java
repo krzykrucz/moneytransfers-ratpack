@@ -14,9 +14,9 @@ public class MoneyTransfersAPI implements Action<Chain> {
 
     @Override
     public void execute(Chain chain) throws Exception {
-        chain
+        chain // TODO add rejecting, accepting, receiving transfers
                 .register(r -> r.add(ServerErrorHandler.class, new ExceptionHandler()))
-                .post("transfer", TransferCommandHandler.class)
+                .post("transfer/perform", TransferCommandHandler.class)
                 .post("account", CreateAccountHandler.class)
                 .get("account/:number", GetAccountHandler.class)
                 .post("deposit", DepositMoneyHandler.class)

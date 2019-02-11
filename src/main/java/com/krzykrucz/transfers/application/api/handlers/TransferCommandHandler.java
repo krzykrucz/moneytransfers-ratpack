@@ -1,7 +1,7 @@
 package com.krzykrucz.transfers.application.api.handlers;
 
 import com.krzykrucz.transfers.application.TransfersApplicationService;
-import com.krzykrucz.transfers.application.api.command.MoneyTransferCommand;
+import com.krzykrucz.transfers.application.api.command.PerformMoneyTransferCommand;
 import ratpack.handling.Context;
 import ratpack.handling.Handler;
 import ratpack.http.Status;
@@ -21,7 +21,7 @@ public class TransferCommandHandler implements Handler {
 
     @Override
     public void handle(Context ctx) {
-        ctx.parse(MoneyTransferCommand.class)
+        ctx.parse(PerformMoneyTransferCommand.class)
                 .then(moneyTransferCommand -> {
                     transfersApplicationService.transfer(moneyTransferCommand);
                     ctx.getResponse().status(Status.OK).send();

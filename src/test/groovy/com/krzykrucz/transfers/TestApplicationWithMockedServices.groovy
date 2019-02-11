@@ -1,15 +1,19 @@
 package com.krzykrucz.transfers
 
 import com.krzykrucz.transfers.domain.CurrencyExchanger
-import org.joda.money.CurrencyUnit
-import org.joda.money.Money
+import com.krzykrucz.transfers.domain.account.AccountRepository
+import com.krzykrucz.transfers.infrastructure.persistence.AccountRepositorySpyProvider
 import ratpack.guice.BindingsImposition
 import ratpack.impose.ImpositionsSpec
+import ratpack.impose.UserRegistryImposition
+import ratpack.registry.Registry
 import ratpack.test.MainClassApplicationUnderTest
 
 class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
 
-    def exchanger = new NoOpCurrencyExchanger()
+    def exchanger = null
+
+    Registry appRegistry
 
     TestApplicationWithMockedServices(Class<?> mainClass) {
         super(mainClass)
@@ -22,15 +26,25 @@ class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
 
     @Override
     protected void addImpositions(ImpositionsSpec impositions) {
+        if (exchanger != null) {
+            impositions.add(BindingsImposition.of {
+                it.bindInstance(CurrencyExchanger.class, this.exchanger)
+            })
+        }
+        impositions.add(UserRegistryImposition.of({
+            this.appRegistry = it
+            Registry.empty()
+        }))
+
         impositions.add(BindingsImposition.of {
-            it.bindInstance(CurrencyExchanger.class, this.exchanger)
+            it.providerType(AccountRepository, AccountRepositorySpyProvider)
         })
     }
 
-    class NoOpCurrencyExchanger implements CurrencyExchanger {
-        @Override
-        Money exchangeIfNecessary(Money money, CurrencyUnit targetCurrencyUnit) {
-            Money.of(targetCurrencyUnit, money.amount)
-        }
+    def <T> T getInstance(Class<T> classOf) {
+        super.getAddress()
+        appRegistry.get(classOf)
     }
+
+
 }

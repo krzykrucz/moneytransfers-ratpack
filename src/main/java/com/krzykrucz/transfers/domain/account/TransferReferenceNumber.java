@@ -16,4 +16,13 @@ public class TransferReferenceNumber {
     static TransferReferenceNumber generate() {
         return new TransferReferenceNumber(UUID.randomUUID());
     }
+
+    public static TransferReferenceNumber fromExisting(String ref) {
+        return new TransferReferenceNumber(UUID.fromString(ref));
+    }
+
+    @Override
+    public String toString() {
+        return uuid.toString();
+    }
 }

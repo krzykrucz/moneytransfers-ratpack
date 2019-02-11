@@ -8,11 +8,12 @@ import lombok.Setter;
 import org.joda.money.CurrencyUnit;
 
 import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 
 @AllArgsConstructor
 @Getter
 @Setter(value = PRIVATE)
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor(access = PROTECTED)
 public class OpenAccountCommand {
 
     private String accountNumber;

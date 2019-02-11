@@ -45,10 +45,10 @@ class AccountTest extends Specification {
         account.commissionTransferTo ACCOUNT_2, TEN_DOLLARS
 
         then:
-        account.pendingTransfers.size() == 1
+        account.pendingOutcomingTransfers.size() == 1
         account.balance == TEN_DOLLARS
 
-        def pendingTransfer = account.pendingTransfers.head()
+        def pendingTransfer = account.pendingOutcomingTransfers.head()
         def expectedTransfer = new MoneyTransfer(pendingTransfer, TEN_DOLLARS, account.accountNumber, ACCOUNT_2)
         def expectedBlockedMoney = TEN_DOLLARS
         def events = account.finishModification().asJava()
@@ -65,11 +65,11 @@ class AccountTest extends Specification {
         account.commissionTransferTo ACCOUNT_2, TEN_DOLLARS
 
         when:
-        def pendingTransferRefNumber = account.pendingTransfers.head()
+        def pendingTransferRefNumber = account.pendingOutcomingTransfers.head()
         account.confirmTransfer pendingTransferRefNumber
 
         then:
-        account.pendingTransfers.size() == 0
+        account.pendingOutcomingTransfers.size() == 0
         account.balance == TEN_DOLLARS
     }
 
@@ -80,11 +80,11 @@ class AccountTest extends Specification {
         account.commissionTransferTo ACCOUNT_2, TEN_DOLLARS
 
         when:
-        def pendingTransferRefNumber = account.pendingTransfers.head()
+        def pendingTransferRefNumber = account.pendingOutcomingTransfers.head()
         account.rejectTransfer pendingTransferRefNumber
 
         then:
-        account.pendingTransfers.size() == 0
+        account.pendingOutcomingTransfers.size() == 0
         account.balance == TWENTY_DOLLARS
     }
 
@@ -102,7 +102,7 @@ class AccountTest extends Specification {
         account.receiveTransfer(transfer)
 
         then:
-        account.pendingTransfers.size() == 0
+        account.pendingOutcomingTransfers.size() == 0
         account.balance == TEN_DOLLARS
 
         def events = account.finishModification().asJava()
@@ -126,7 +126,7 @@ class AccountTest extends Specification {
         account.receiveTransfer(transfer)
 
         then:
-        account.pendingTransfers.size() == 0
+        account.pendingOutcomingTransfers.size() == 0
         account.balance == Money.zero(USD)
 
         def events = account.finishModification().asJava()
