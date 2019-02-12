@@ -10,7 +10,7 @@ public class ResilienceConfig extends AbstractModule {
     protected void configure() {
         Resilience4jModule module = new Resilience4jModule();
         module.configure(c -> c
-                .retry("retryOptimisticLocks", retryConfig -> retryConfig
+                .retry("retryExceptions", retryConfig -> retryConfig
                         .maxAttempts(4)
                         .waitDurationInMillis(100)
                 ));

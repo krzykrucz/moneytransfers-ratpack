@@ -1,4 +1,4 @@
-package com.krzykrucz.transfers
+package com.krzykrucz.transfers.infrastructure.exchanger
 
 import com.krzykrucz.transfers.application.error.OptimisticLockException
 import com.krzykrucz.transfers.domain.CurrencyExchanger

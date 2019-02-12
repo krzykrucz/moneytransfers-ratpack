@@ -2,18 +2,17 @@ package com.krzykrucz.transfers
 
 import com.krzykrucz.transfers.domain.CurrencyExchanger
 import com.krzykrucz.transfers.domain.account.AccountRepository
-import com.krzykrucz.transfers.infrastructure.persistence.AccountRepositorySpyProvider
 import ratpack.guice.BindingsImposition
 import ratpack.impose.ImpositionsSpec
 import ratpack.impose.UserRegistryImposition
 import ratpack.registry.Registry
 import ratpack.test.MainClassApplicationUnderTest
-import spock.mock.DetachedMockFactory
 
 class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
 
-    def exchanger = null
-    def accountRepository = null
+    CurrencyExchanger exchanger = null
+
+    Class<? extends AccountRepository> accountRepositoryClass = null
 
     Registry appRegistry
 
@@ -26,37 +25,33 @@ class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
         this.exchanger = exchanger
     }
 
-    TestApplicationWithMockedServices(Class<?> mainClass, AccountRepository repository) {
+    TestApplicationWithMockedServices(Class<?> mainClass, Class<? extends AccountRepository> repoClass) {
         super(mainClass)
-        this.accountRepository = repository
+        this.accountRepositoryClass = repoClass
     }
 
     @Override
     protected void addImpositions(ImpositionsSpec impositions) {
-        if (exchanger != null) {
-            impositions.add(BindingsImposition.of {
-                it.bindInstance(CurrencyExchanger, this.exchanger)
-            })
-        }
-//        if (accountRepository != null) {
-//            impositions.add(BindingsImposition.of {
-//                it.bindInstance(AccountRepository, this.accountRepository)
-//            })
-//        }
         impositions.add(UserRegistryImposition.of({
             this.appRegistry = it
             Registry.empty()
         }))
 
-        impositions.add(BindingsImposition.of {
-            it.providerType(AccountRepository, AccountRepositorySpyProvider)
-        })
+        if (exchanger != null) {
+            impositions.add(BindingsImposition.of {
+                it.bindInstance(CurrencyExchanger, this.exchanger)
+            })
+        }
+        if (accountRepositoryClass != null) {
+            impositions.add(BindingsImposition.of {
+                it.bind(AccountRepository, accountRepositoryClass)
+            })
+        }
     }
 
     def <T> T getInstance(Class<T> classOf) {
         super.getAddress()
         appRegistry.get(classOf)
     }
-
 
 }

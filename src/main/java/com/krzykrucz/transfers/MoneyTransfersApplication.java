@@ -9,12 +9,12 @@ import ratpack.server.RatpackServer;
 
 public class MoneyTransfersApplication {
 
-    // TODO add resilience4j retries, specifically to internal event handlers (test that)
     public static void main(String[] args) throws Exception {
         RatpackServer.start(s -> s
                 .serverConfig(c -> c.baseDir(BaseDir.find()))
                 .registry(Guice.registry(b -> b
-                        .module(GuiceConfig.class).module(new ResilienceConfig())))
+                        .module(GuiceConfig.class)
+                        .module(ResilienceConfig.class)))
                 .handlers(new MoneyTransfersAPI())
         );
     }

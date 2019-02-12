@@ -1,6 +1,8 @@
 package com.krzykrucz.transfers
 
-class TransfersEndToEndTest extends IntegrationTest {
+import com.krzykrucz.transfers.infrastructure.exchanger.ThrowingExternalCurrencyExchanger
+
+class TransfersEndToEndFunctionalTest extends IntegrationTest {
 
     def "should transfer money"() {
         when:

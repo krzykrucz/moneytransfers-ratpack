@@ -37,9 +37,7 @@ public class GuiceConfig extends AbstractModule {
 
         bind(CurrencyExchanger.class).to(IdentityCurrencyExchanger.class);
         bind(AccountRepository.class).to(InMemoryAccountRepository.class);
-//        bind(TransfersApplicationService.class).to(RetryingTransferApplicationService.class);
-        bind(TransfersApplicationService.class)//.annotatedWith(SecondarySingleton.class)
-                .to(TransfersApplicationServiceImpl.class);
+        bind(TransfersApplicationService.class).to(TransfersApplicationServiceImpl.class);
         bind(TransferCommandHandler.class);
         bind(CreateAccountHandler.class);
         bind(GetAccountHandler.class);

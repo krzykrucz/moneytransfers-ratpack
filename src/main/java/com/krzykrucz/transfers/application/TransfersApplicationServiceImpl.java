@@ -24,6 +24,7 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
+    @Retry(name = "retryExceptions")
     public void transfer(PerformMoneyTransferCommand moneyTransferCommand) {
         final Account account = accountRepository.findByAccountNumber(moneyTransferCommand.getFrom());
         account.commissionTransferTo(moneyTransferCommand.getTo(), moneyTransferCommand.getValue());
@@ -31,6 +32,7 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
+    @Retry(name = "retryExceptions")
     public void openAccount(OpenAccountCommand openAccountCommand) {
         final Account newAccount = new Account(
                 AccountIdentifier.generate(),
@@ -42,7 +44,7 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
-    @Retry(name = "retryOptimisticLocks")
+    @Retry(name = "retryExceptions")
     public void depositMoney(DepositMoneyCommand depositMoneyCommand) {
         final Account account = accountRepository.findByAccountNumber(depositMoneyCommand.getAccountNumber());
         final CurrencyUnit accountCurrency = account.getCurrency();
@@ -55,6 +57,7 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
+    @Retry(name = "retryExceptions")
     public void acceptTransfer(AcceptTransferCommand command) {
         final TransferReferenceNumber transferReferenceNumber = command.getTransferReferenceNumber();
         final Account account = accountRepository.findByTransfer(transferReferenceNumber);
@@ -65,6 +68,7 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
+    @Retry(name = "retryExceptions")
     public void rejectTransfer(RejectTransferCommand command) {
         final TransferReferenceNumber transferReferenceNumber = command.getTransferReferenceNumber();
         final Account account = accountRepository.findByTransfer(transferReferenceNumber);
@@ -75,6 +79,7 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
+    @Retry(name = "retryExceptions")
     public void receiveTransfer(ReceiveTransferCommand command) {
         final MoneyTransfer moneyTransfer = new MoneyTransfer(
                 command.getTransferReferenceNumber(),
