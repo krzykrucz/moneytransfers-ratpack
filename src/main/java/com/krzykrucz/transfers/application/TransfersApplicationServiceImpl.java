@@ -24,7 +24,7 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
-    @Retry(name = "retryExceptions")
+    @Retry(name = "retryExceptions") // TODO move all retries to separate proxy class
     public void transfer(PerformMoneyTransferCommand moneyTransferCommand) {
         final Account account = accountRepository.findByAccountNumber(moneyTransferCommand.getFrom());
         account.commissionTransferTo(moneyTransferCommand.getTo(), moneyTransferCommand.getValue());

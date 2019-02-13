@@ -2,6 +2,7 @@ package com.krzykrucz.transfers
 
 import com.krzykrucz.transfers.infrastructure.exchanger.ThrowingExternalCurrencyExchanger
 
+// TODO mock AppServiceImpl, remaining tests move to domain tests
 class TransfersEndToEndFunctionalTest extends IntegrationTest {
 
     def "should transfer money"() {

@@ -11,6 +11,7 @@ import static com.krzykrucz.transfers.domain.account.AccountIdentifier.generate
 import static org.joda.money.CurrencyUnit.EUR
 import static org.joda.money.CurrencyUnit.USD
 
+// TODO move to AppServiceImplTest
 class AccountTest extends Specification {
 
     final def ACCOUNT_2 = new AccountNumber("22")

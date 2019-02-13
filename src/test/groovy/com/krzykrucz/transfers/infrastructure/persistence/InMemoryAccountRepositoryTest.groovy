@@ -10,6 +10,7 @@ import spock.lang.Specification
 
 import static org.joda.money.CurrencyUnit.USD
 
+// TODO try testing with AppServiceImpl as a root
 class InMemoryAccountRepositoryTest extends Specification {
 
     final static TEN_USD = Money.of(USD, 10)
