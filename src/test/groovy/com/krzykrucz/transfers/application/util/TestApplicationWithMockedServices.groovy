@@ -1,5 +1,6 @@
-package com.krzykrucz.transfers
+package com.krzykrucz.transfers.application.util
 
+import com.krzykrucz.transfers.application.DomainAPI
 import com.krzykrucz.transfers.domain.CurrencyExchanger
 import com.krzykrucz.transfers.domain.account.AccountRepository
 import ratpack.guice.BindingsImposition
@@ -11,6 +12,7 @@ import ratpack.test.MainClassApplicationUnderTest
 class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
 
     CurrencyExchanger exchanger = null
+    DomainAPI domain = null
 
     Class<? extends AccountRepository> accountRepositoryClass = null
 
@@ -23,6 +25,11 @@ class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
     TestApplicationWithMockedServices(Class<?> mainClass, CurrencyExchanger exchanger) {
         super(mainClass)
         this.exchanger = exchanger
+    }
+
+    TestApplicationWithMockedServices(Class<?> mainClass, DomainAPI domain) {
+        super(mainClass)
+        this.domain = domain
     }
 
     TestApplicationWithMockedServices(Class<?> mainClass, Class<? extends AccountRepository> repoClass) {
@@ -45,6 +52,11 @@ class TestApplicationWithMockedServices extends MainClassApplicationUnderTest {
         if (accountRepositoryClass != null) {
             impositions.add(BindingsImposition.of {
                 it.bind(AccountRepository, accountRepositoryClass)
+            })
+        }
+        if (domain != null) {
+            impositions.add(BindingsImposition.of {
+                it.bindInstance(DomainAPI, domain)
             })
         }
     }

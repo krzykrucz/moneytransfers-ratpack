@@ -1,5 +1,6 @@
-package com.krzykrucz.transfers
+package com.krzykrucz.transfers.application.util
 
+import com.krzykrucz.transfers.MoneyTransfersApplication
 import com.krzykrucz.transfers.domain.CurrencyExchanger
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
@@ -54,7 +55,7 @@ class IntegrationTest extends Specification {
         app = new TestApplicationWithMockedServices(MoneyTransfersApplication, exchanger)
     }
 
-    CommandBuilder money(Money money) {
+    CommandBuilder money(Money money = THIRTY_DOLLARS) {
         new CommandBuilder(money)
     }
 
@@ -69,7 +70,7 @@ class IntegrationTest extends Specification {
             post('transfer/perform', [value: [amount: money.amountMinor, currency: money.currencyUnit.code], from: from, to: to])
         }
 
-        def "deposited on account"(number) {
+        def "deposited on account"(number = '01') {
             post('deposit', [value: [amount: money.amountMinor, currency: money.currencyUnit.code], accountNumber: number])
         }
     }
@@ -90,11 +91,6 @@ class IntegrationTest extends Specification {
         def response = client.get(path)
         httpResponseCodes.add response.statusCode
         response
-    }
-
-    protected <T> T inject(final Class<T> classOf) {
-        aut.getAddress();
-        return appRegistry.get(classOf);
     }
 
 }

@@ -10,7 +10,7 @@ import ratpack.func.Action;
 import ratpack.handling.Chain;
 
 
-public class MoneyTransfersAPI implements Action<Chain> {
+public class MoneyTransfersRestAPI implements Action<Chain> {
 
     @Override
     public void execute(Chain chain) throws Exception {

@@ -7,6 +7,7 @@ import spock.lang.Specification
 
 import static org.joda.money.CurrencyUnit.USD
 
+// TODO move to ApiFunctionalTest
 class MoneySerializationTest extends Specification {
 
     def serializer = new MoneySerializer()

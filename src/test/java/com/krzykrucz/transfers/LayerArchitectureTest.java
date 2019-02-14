@@ -2,7 +2,7 @@ package com.krzykrucz.transfers;
 
 
 import com.google.common.reflect.ClassPath;
-import com.krzykrucz.transfers.application.api.MoneyTransfersAPI;
+import com.krzykrucz.transfers.application.api.MoneyTransfersRestAPI;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ImportOption.DontIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -12,7 +12,6 @@ import com.tngtech.archunit.lang.ArchRule;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,7 @@ public class LayerArchitectureTest {
                     .whereLayer("Application").mayOnlyBeAccessedByLayers("Infrastructure")
                     .whereLayer("Domain").mayOnlyBeAccessedByLayers("Application", "Infrastructure")
 
-                    .ignoreDependency(MoneyTransfersApplication.class, MoneyTransfersAPI.class);
+                    .ignoreDependency(MoneyTransfersApplication.class, MoneyTransfersRestAPI.class);
 
     @ArchTest
     public void adaptersShouldNotDependOnEachOther(JavaClasses classes) {

@@ -2,8 +2,10 @@ package com.krzykrucz.transfers.infrastructure.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
+import com.krzykrucz.transfers.application.DomainAPI;
+import com.krzykrucz.transfers.application.DomainFacade;
+import com.krzykrucz.transfers.application.RetryingTransfersApplicationService;
 import com.krzykrucz.transfers.application.TransfersApplicationService;
-import com.krzykrucz.transfers.application.TransfersApplicationServiceImpl;
 import com.krzykrucz.transfers.application.api.handlers.CreateAccountHandler;
 import com.krzykrucz.transfers.application.api.handlers.DepositMoneyHandler;
 import com.krzykrucz.transfers.application.api.handlers.GetAccountHandler;
@@ -37,7 +39,8 @@ public class GuiceConfig extends AbstractModule {
 
         bind(CurrencyExchanger.class).to(IdentityCurrencyExchanger.class);
         bind(AccountRepository.class).to(InMemoryAccountRepository.class);
-        bind(TransfersApplicationService.class).to(TransfersApplicationServiceImpl.class);
+        bind(TransfersApplicationService.class).to(RetryingTransfersApplicationService.class);
+        bind(DomainAPI.class).to(DomainFacade.class);
         bind(TransferCommandHandler.class);
         bind(CreateAccountHandler.class);
         bind(GetAccountHandler.class);

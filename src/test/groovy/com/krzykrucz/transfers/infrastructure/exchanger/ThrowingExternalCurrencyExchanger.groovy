@@ -5,6 +5,7 @@ import com.krzykrucz.transfers.domain.CurrencyExchanger
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 
+@Deprecated
 class ThrowingExternalCurrencyExchanger implements CurrencyExchanger {
     final Exception throwable
 

@@ -1,6 +1,6 @@
 package com.krzykrucz.transfers;
 
-import com.krzykrucz.transfers.application.api.MoneyTransfersAPI;
+import com.krzykrucz.transfers.application.api.MoneyTransfersRestAPI;
 import com.krzykrucz.transfers.infrastructure.guice.GuiceConfig;
 import com.krzykrucz.transfers.infrastructure.retry.ResilienceConfig;
 import ratpack.guice.Guice;
@@ -15,7 +15,7 @@ public class MoneyTransfersApplication {
                 .registry(Guice.registry(b -> b
                         .module(GuiceConfig.class)
                         .module(ResilienceConfig.class)))
-                .handlers(new MoneyTransfersAPI())
+                .handlers(new MoneyTransfersRestAPI())
         );
     }
 

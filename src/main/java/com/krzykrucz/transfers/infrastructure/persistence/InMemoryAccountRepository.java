@@ -23,8 +23,8 @@ public class InMemoryAccountRepository implements AccountRepository {
 
     private final DomainEventPublisher eventPublisher;
 
-    private final Map<AccountNumber, Account> accountsByNumber = Maps.newConcurrentMap();
-    private final Map<TransferReferenceNumber, Account> accountsByTransfer = Maps.newConcurrentMap();
+    protected final Map<AccountNumber, Account> accountsByNumber = Maps.newConcurrentMap();
+    protected final Map<TransferReferenceNumber, Account> accountsByTransfer = Maps.newConcurrentMap();
 
     @Inject
     public InMemoryAccountRepository(DomainEventPublisher eventPublisher) {

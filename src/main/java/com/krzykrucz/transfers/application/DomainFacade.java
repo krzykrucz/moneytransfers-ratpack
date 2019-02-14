@@ -6,25 +6,23 @@ import com.google.inject.Singleton;
 import com.krzykrucz.transfers.application.api.command.*;
 import com.krzykrucz.transfers.domain.CurrencyExchanger;
 import com.krzykrucz.transfers.domain.account.*;
-import io.github.resilience4j.ratpack.retry.Retry;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
 @Singleton
-public class TransfersApplicationServiceImpl implements TransfersApplicationService {
+public class DomainFacade implements DomainAPI {
 
     private final AccountRepository accountRepository;
 
     private final CurrencyExchanger currencyExchanger;
 
     @Inject
-    public TransfersApplicationServiceImpl(AccountRepository accountRepository, CurrencyExchanger externalCurrencyExchanger) {
+    public DomainFacade(AccountRepository accountRepository, CurrencyExchanger externalCurrencyExchanger) {
         this.accountRepository = accountRepository;
         this.currencyExchanger = externalCurrencyExchanger;
     }
 
     @Override
-    @Retry(name = "retryExceptions") // TODO move all retries to separate proxy class
     public void transfer(PerformMoneyTransferCommand moneyTransferCommand) {
         final Account account = accountRepository.findByAccountNumber(moneyTransferCommand.getFrom());
         account.commissionTransferTo(moneyTransferCommand.getTo(), moneyTransferCommand.getValue());
@@ -32,7 +30,6 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
-    @Retry(name = "retryExceptions")
     public void openAccount(OpenAccountCommand openAccountCommand) {
         final Account newAccount = new Account(
                 AccountIdentifier.generate(),
@@ -44,7 +41,6 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
-    @Retry(name = "retryExceptions")
     public void depositMoney(DepositMoneyCommand depositMoneyCommand) {
         final Account account = accountRepository.findByAccountNumber(depositMoneyCommand.getAccountNumber());
         final CurrencyUnit accountCurrency = account.getCurrency();
@@ -57,7 +53,6 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
-    @Retry(name = "retryExceptions")
     public void acceptTransfer(AcceptTransferCommand command) {
         final TransferReferenceNumber transferReferenceNumber = command.getTransferReferenceNumber();
         final Account account = accountRepository.findByTransfer(transferReferenceNumber);
@@ -68,7 +63,6 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
-    @Retry(name = "retryExceptions")
     public void rejectTransfer(RejectTransferCommand command) {
         final TransferReferenceNumber transferReferenceNumber = command.getTransferReferenceNumber();
         final Account account = accountRepository.findByTransfer(transferReferenceNumber);
@@ -79,7 +73,6 @@ public class TransfersApplicationServiceImpl implements TransfersApplicationServ
     }
 
     @Override
-    @Retry(name = "retryExceptions")
     public void receiveTransfer(ReceiveTransferCommand command) {
         final MoneyTransfer moneyTransfer = new MoneyTransfer(
                 command.getTransferReferenceNumber(),

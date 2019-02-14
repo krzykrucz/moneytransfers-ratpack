@@ -1,4 +1,4 @@
-package com.krzykrucz.transfers.infrastructure
+package com.krzykrucz.transfers.infrastructure.exchanger
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.krzykrucz.transfers.infrastructure.exchanger.ExternalCurrencyExchanger

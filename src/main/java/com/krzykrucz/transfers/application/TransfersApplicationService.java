@@ -1,17 +1,6 @@
 package com.krzykrucz.transfers.application;
 
-import com.krzykrucz.transfers.application.api.command.*;
+// TODO consider inverting interface dependency
+public interface TransfersApplicationService extends DomainAPI {
 
-public interface TransfersApplicationService {
-    void transfer(PerformMoneyTransferCommand moneyTransferCommand);
-
-    void openAccount(OpenAccountCommand openAccountCommand);
-
-    void depositMoney(DepositMoneyCommand depositMoneyCommand);
-
-    void acceptTransfer(AcceptTransferCommand acceptTransferCommand);
-
-    void rejectTransfer(RejectTransferCommand rejectTransferCommand);
-
-    void receiveTransfer(ReceiveTransferCommand receiveTransferCommand);
 }
