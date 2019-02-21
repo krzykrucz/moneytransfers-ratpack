@@ -1,19 +1,17 @@
 package com.krzykrucz.transfers.domain.util
 
-import com.krzykrucz.transfers.application.DomainAPI
-import com.krzykrucz.transfers.application.DomainFacade
-import com.krzykrucz.transfers.application.api.command.DepositMoneyCommand
-import com.krzykrucz.transfers.application.api.command.OpenAccountCommand
-import com.krzykrucz.transfers.application.api.command.PerformMoneyTransferCommand
-import com.krzykrucz.transfers.application.api.handlers.internal.MoneyTransferAcceptedHandler
-import com.krzykrucz.transfers.application.api.handlers.internal.MoneyTransferCommissionedHandler
-import com.krzykrucz.transfers.application.api.handlers.internal.MoneyTransferRejectedHandler
+import com.krzykrucz.transfers.adapters.events.GuavaDomainEventPublisher
+import com.krzykrucz.transfers.adapters.exchanger.IdentityCurrencyExchanger
+import com.krzykrucz.transfers.application.AccountApplicationService
+import com.krzykrucz.transfers.application.AccountApplicationServiceImpl
+import com.krzykrucz.transfers.application.api.command.*
+import com.krzykrucz.transfers.domain.CurrencyExchanger
 import com.krzykrucz.transfers.domain.account.AccountNumber
-import com.krzykrucz.transfers.infrastructure.exchanger.IdentityCurrencyExchanger
+import com.krzykrucz.transfers.domain.account.MoneyTransfer
+import com.krzykrucz.transfers.domain.common.DomainEventPublisher
 import org.joda.money.Money
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.util.concurrent.PollingConditions
 
 import static org.joda.money.CurrencyUnit.EUR
 import static org.joda.money.CurrencyUnit.USD
@@ -29,50 +27,30 @@ class DomainTest extends Specification {
     final def THIRTY_EURO = Money.of EUR, 30
 
     @Shared
-    def conditions = new PollingConditions(timeout: 5, factor: 1.25)
-
-    @Shared
-    DomainAPI domainAPI
+    AccountApplicationService service
 
     @Shared
     InMemoryAccountRepositoryInTest repository
 
     @Shared
-    EventPublisherSpy eventPublisher
+    DomainEventPublisher eventPublisher
 
+    @Shared
+    CurrencyExchanger exchanger
 
     def setupSpec() {
-        def exchanger = new IdentityCurrencyExchanger()
-        eventPublisher = new EventPublisherSpy()
-        repository = new InMemoryAccountRepositoryInTest(eventPublisher)
-        domainAPI = new DomainFacade(repository, exchanger)
-
-        def applicationService = new AppServiceStub(domainAPI)
-        def moneyTransferAcceptedHandler = Spy(new MoneyTransferAcceptedHandler(applicationService))
-        def moneyTransferCommissionedHandler = Spy(new MoneyTransferCommissionedHandler(applicationService))
-        def moneyTransferRejectedHandler = Spy(new MoneyTransferRejectedHandler(applicationService))
-        eventPublisher.subcribe((Set) [
-                moneyTransferAcceptedHandler,
-                moneyTransferCommissionedHandler,
-                moneyTransferRejectedHandler
-        ])
+        exchanger = new IdentityCurrencyExchanger()
+        eventPublisher = new GuavaDomainEventPublisher()
+        repository = new InMemoryAccountRepositoryInTest()
+        service = new AccountApplicationServiceImpl(repository, exchanger, eventPublisher)
     }
 
     def cleanup() {
         repository.clear()
-        eventPublisher.reset()
-    }
-
-    def 'transfer accepted event published'() {
-        eventPublisher.checkTransferAcceptedEventReceived()
-    }
-
-    def "transfer rejected event published"() {
-        eventPublisher.checkTransferRejectedEventReceived()
     }
 
     def "account created"(number, currency) {
-        domainAPI.openAccount(new OpenAccountCommand(number, currency))
+        service.openAccount(new OpenAccountCommand(number, currency))
     }
 
     def "balance of account"(number) {
@@ -80,23 +58,47 @@ class DomainTest extends Specification {
         "${balance.currencyUnit.symbol}${balance.amount.toPlainString()}"
     }
 
-    CommandBuilder money(Money money) {
-        new CommandBuilder(money)
+    MoneyCommandBuilder money(Money money) {
+        new MoneyCommandBuilder(money)
     }
 
-    private class CommandBuilder {
+    private class MoneyCommandBuilder {
         private Money money
 
-        CommandBuilder(Money money) {
+        MoneyCommandBuilder(Money money) {
             this.money = money
         }
 
         def transfered(from, to) {
-            domainAPI.transfer(new PerformMoneyTransferCommand(from, to, money))
+            service.transfer(new PerformMoneyTransferCommand(from, to, money))
         }
 
         def "deposited on account"(number) {
-            domainAPI.depositMoney(new DepositMoneyCommand(money, number))
+            service.depositMoney(new DepositMoneyCommand(money, number))
+        }
+    }
+
+    TransferCommandBuilder 'last commissioned transfer'() {
+        new TransferCommandBuilder(eventPublisher.lastCommissionedTransfer)
+    }
+
+    private class TransferCommandBuilder {
+        private MoneyTransfer transfer
+
+        TransferCommandBuilder(MoneyTransfer transfer) {
+            this.transfer = transfer
+        }
+
+        def "received"() {
+            service.receiveTransfer(new ReceiveTransferCommand(transfer))
+        }
+
+        def "rejected at sender"() {
+            service.rejectTransfer(new RejectTransferCommand(transfer.referenceNumber))
+        }
+
+        def "accepted at sender"() {
+            service.acceptTransfer(new AcceptTransferCommand(transfer.referenceNumber))
         }
     }
 

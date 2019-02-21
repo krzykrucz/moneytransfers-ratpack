@@ -1,7 +1,7 @@
 package com.krzykrucz.transfers.application
 
 import com.krzykrucz.transfers.application.util.ApplicationTest
-import org.junit.Ignore
+import spock.lang.Ignore
 import spock.lang.Unroll
 
 class ResilienceSpec extends ApplicationTest {
@@ -61,21 +61,6 @@ class ResilienceSpec extends ApplicationTest {
         0                     || 200
         3                     || 200
         4                     || 500
-    }
-
-    @Unroll
-    def "accepting transfer should be resilient to up to 3 retries"() {
-        // TODO
-    }
-
-    @Unroll
-    def "rejecting transfer should be resilient to up to 3 retries"() {
-        // TODO
-    }
-
-    @Unroll
-    def "receiving transfer should be resilient to up to 3 retries"() {
-        //tODO
     }
 
     @Ignore

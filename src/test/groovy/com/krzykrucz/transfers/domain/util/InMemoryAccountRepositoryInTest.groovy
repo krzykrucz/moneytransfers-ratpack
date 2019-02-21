@@ -1,16 +1,36 @@
 package com.krzykrucz.transfers.domain.util
 
-import com.krzykrucz.transfers.domain.common.DomainEventPublisher
-import com.krzykrucz.transfers.infrastructure.persistence.InMemoryAccountRepository
+import com.krzykrucz.transfers.adapters.persistence.InMemoryAccountRepository
+import com.krzykrucz.transfers.domain.account.AccountRepository
 
-class InMemoryAccountRepositoryInTest extends InMemoryAccountRepository {
+class InMemoryAccountRepositoryInTest implements AccountRepository {
 
-    InMemoryAccountRepositoryInTest(DomainEventPublisher eventPublisher) {
-        super(eventPublisher)
-    }
+    @Delegate
+    private AccountRepository accountRepository = new InMemoryAccountRepository();
+//    Set<Account> accounts = (Set) []
+//
+//    def clear() {
+//        accounts.clear()
+//    }
+//
+//    @Override
+//    void save(Account account) {
+//        account.finishModification()
+//        accounts.add(account)
+//    }
+//
+//    @Override
+//    Account findByTransfer(TransferReferenceNumber transferReferenceNumber) {
+//        accounts.find { it.pendingOutcomingTransfers.contains(transferReferenceNumber) }
+//    }
+//
+//    @Override
+//    Account findByAccountNumber(AccountNumber accountNumber) {
+//        accounts.find { it.accountNumber == accountNumber }
+//    }
+
 
     def clear() {
-        super.accountsByNumber.clear()
-        super.accountsByTransfer.clear()
+        accountRepository = new InMemoryAccountRepository()
     }
 }

@@ -1,7 +1,6 @@
 package com.krzykrucz.transfers.application.util
 
-import com.krzykrucz.transfers.MoneyTransfersApplication
-import com.krzykrucz.transfers.domain.CurrencyExchanger
+import com.krzykrucz.transfers.appconfig.MoneyTransfersApplication
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
@@ -49,10 +48,6 @@ class IntegrationTest extends Specification {
         def textJSON = get("account/${number}").body.text
         def account = jsonParser.parseText(textJSON)
         account.balance.pretty
-    }
-
-    def "mocked currency exchanger"(CurrencyExchanger exchanger) {
-        app = new TestApplicationWithMockedServices(MoneyTransfersApplication, exchanger)
     }
 
     CommandBuilder money(Money money = THIRTY_DOLLARS) {

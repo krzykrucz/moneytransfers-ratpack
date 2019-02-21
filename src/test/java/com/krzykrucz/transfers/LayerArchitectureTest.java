@@ -2,7 +2,8 @@ package com.krzykrucz.transfers;
 
 
 import com.google.common.reflect.ClassPath;
-import com.krzykrucz.transfers.application.api.MoneyTransfersRestAPI;
+import com.krzykrucz.transfers.adapters.rest.MoneyTransfersRestAPI;
+import com.krzykrucz.transfers.appconfig.MoneyTransfersApplication;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ImportOption.DontIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
+import static org.apache.http.conn.ssl.AbstractVerifier.countDots;
 
 @RunWith(ArchUnitRunner.class)
 @AnalyzeClasses(packages = "com.krzykrucz.transfers", importOptions = DontIncludeTests.class)
@@ -28,12 +30,12 @@ public class LayerArchitectureTest {
     public static final ArchRule layersShouldHaveProperDependencies =
             layeredArchitecture()
                     .layer("Application").definedBy("..application..")
-                    .layer("Domain").definedBy("..domain..")
-                    .layer("Infrastructure").definedBy("..infrastructure..")
+                    .layer("Domain").definedBy("..service..")
+                    .layer("Adapters").definedBy("..adapters..")
 
-                    .whereLayer("Infrastructure").mayNotBeAccessedByAnyLayer()
-                    .whereLayer("Application").mayOnlyBeAccessedByLayers("Infrastructure")
-                    .whereLayer("Domain").mayOnlyBeAccessedByLayers("Application", "Infrastructure")
+                    .whereLayer("Adapters").mayNotBeAccessedByAnyLayer()
+                    .whereLayer("Application").mayOnlyBeAccessedByLayers("Adapters")
+                    .whereLayer("Domain").mayOnlyBeAccessedByLayers("Application", "Adapters")
 
                     .ignoreDependency(MoneyTransfersApplication.class, MoneyTransfersRestAPI.class);
 
@@ -60,13 +62,14 @@ public class LayerArchitectureTest {
         Set<ClassPath.ClassInfo> classInfos = null;
         try {
             classInfos = ClassPath.from(MoneyTransfersApplication.class.getClassLoader())
-                    .getTopLevelClassesRecursive("com.krzykrucz.transfers.infrastructure");
+                    .getTopLevelClassesRecursive("com.krzykrucz.transfers.adapters");
         } catch (IOException e) {
             e.printStackTrace();
         }
         return classInfos.stream()
                 .map(ClassPath.ClassInfo::getPackageName)
-                .filter(aPackage -> !aPackage.equals("com.krzykrucz.transfers.infrastructure"))
+                .filter(aPackage -> !aPackage.equals("com.krzykrucz.transfers.adapters"))
+                .filter(aPackage -> countDots(aPackage) < 5)
                 .collect(Collectors.toSet());
     }
 

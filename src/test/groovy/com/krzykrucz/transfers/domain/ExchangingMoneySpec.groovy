@@ -19,22 +19,18 @@ class ExchangingMoneySpec extends DomainTest {
         'balance of account'('02') == 'EUR30.00'
 
         when:
-        money(TEN_EURO).transfered('02', '01')
+        money(THIRTY_EURO).transfered('02', '01')
 
         then:
-        conditions.eventually {
-            'balance of account'('01') == '$60.00'
-            'balance of account'('02') == 'EUR0.00'
-        }
+        'balance of account'('01') == '$60.00'
+        'balance of account'('02') == 'EUR0.00'
 
         when:
-        money(TEN_DOLLARS).transfered('01', '02')
+        money(THIRTY_DOLLARS).transfered('01', '02')
 
         then:
-        conditions.eventually {
-            'balance of account'('01') == '$30.00'
-            'balance of account'('02') == 'EUR30.00'
-        }
+        'balance of account'('01') == '$30.00'
+        'balance of account'('02') == 'EUR30.00'
     }
 
 

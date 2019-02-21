@@ -1,5 +1,6 @@
 package com.krzykrucz.transfers.domain
 
+import com.krzykrucz.transfers.domain.common.DomainException
 import com.krzykrucz.transfers.domain.util.DomainTest
 
 class NewAccountSpec extends DomainTest {
@@ -21,6 +22,13 @@ class NewAccountSpec extends DomainTest {
 
         then:
         'balance of account'('01') == '$30.00'
+    }
 
+    def "should not deposit money to non-existent account"() {
+        when:
+        money THIRTY_DOLLARS 'deposited on account' '01'
+
+        then:
+        thrown DomainException
     }
 }
