@@ -28,8 +28,6 @@ public class InMemoryAccountRepository implements AccountRepository {
         accountsByNumber.put(account.getAccountNumber(), account);
         account.getPendingOutcomingTransfers()
                 .forEach(transferRefNumber -> accountsByTransfer.put(transferRefNumber, account));
-
-//        events.forEach(eventPublisher::publish); // TODO remove
     }
 
     private void checkConcurrentModification(Account account) {

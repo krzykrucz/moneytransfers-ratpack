@@ -7,7 +7,6 @@ import io.github.resilience4j.ratpack.Resilience4jModule;
 public class ResilienceConfig extends AbstractModule {
 
     @Override
-    // TODO fork r4j
     protected void configure() {
         Resilience4jModule module = new Resilience4jModule();
         module.configure(c -> c

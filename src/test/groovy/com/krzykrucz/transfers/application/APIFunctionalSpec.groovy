@@ -24,14 +24,35 @@ class APIFunctionalSpec extends ApplicationTest {
 
         where:
         numberOfFails | exception                     || response
-        0             | new RuntimeException()        || 200
         1             | new OptimisticLockException() || 200
         4             | new OptimisticLockException() || 500
         4             | new DomainException('')       || 400
 //        1             | new DomainException('')         || 400 // TODO implement
     }
 
-    // TODO test only API calls to all endpoints
+    def "should respond 200 when depositing money"() {
+        when:
+        money() 'deposited on account'()
+
+        then:
+        'all responses are' 200
+    }
+
+    def "should respond 200 when opening account"() {
+        when:
+        'account created'('01', 'USD')
+
+        then:
+        'all responses are' 200
+    }
+
+    def "should respond 200 when transfering money"() {
+        when:
+        money().transfered('01', '02')
+
+        then:
+        'all responses are' 200
+    }
 
     def "should query correct account information"() {
         given:

@@ -2,6 +2,10 @@ package com.krzykrucz.transfers.domain
 
 import com.krzykrucz.transfers.domain.common.DomainException
 import com.krzykrucz.transfers.domain.util.DomainTest
+import org.joda.money.Money
+import spock.lang.Unroll
+
+import static org.joda.money.CurrencyUnit.USD
 
 class TransferSpec extends DomainTest {
 
@@ -43,6 +47,38 @@ class TransferSpec extends DomainTest {
 
         then:
         thrown DomainException
+    }
+
+    def "should reject transfer less than zero"() {
+        given:
+        'account created' '01', 'USD'
+        'account created' '02', 'USD'
+
+        when:
+        money(Money.of(USD, -1)).transfered('01', '02')
+
+        then:
+        thrown DomainException
+    }
+
+    @Unroll
+    def "should reject transfer for a wrong account"() {
+        given:
+        'account created' '01', 'USD'
+        'account created' '02', 'USD'
+
+        when:
+        money(TEN_DOLLARS).transfered(account1, account2)
+
+        then:
+        thrown DomainException
+
+        where:
+        account1 | account2
+        '01'     | null
+        null     | '02'
+        '03'     | '02'
+        '1'      | '02'
     }
 
 }

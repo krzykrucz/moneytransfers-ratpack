@@ -8,7 +8,6 @@ import org.joda.money.Money;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter(AccessLevel.PRIVATE)
 public class DepositMoneyCommand {
-    //TODO request id for idempotency
 
     @Getter
     private Money value;

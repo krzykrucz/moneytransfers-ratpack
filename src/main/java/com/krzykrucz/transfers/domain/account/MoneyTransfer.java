@@ -10,7 +10,7 @@ import static com.krzykrucz.transfers.domain.common.DomainException.checkNotNull
 
 @Getter
 @EqualsAndHashCode(of = "referenceNumber")
-public class MoneyTransfer { // TODO make all values validation - write tests
+public class MoneyTransfer {
 
     private final TransferReferenceNumber referenceNumber;
     private final Money value;

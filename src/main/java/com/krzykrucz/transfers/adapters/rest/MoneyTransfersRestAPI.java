@@ -19,7 +19,7 @@ public class MoneyTransfersRestAPI implements Action<Chain> {
 
     @Override
     public void execute(Chain chain) throws Exception {
-        chain // TODO add rejecting, accepting, receiving transfers
+        chain
                 .register(r -> r.add(ServerErrorHandler.class, new ExceptionHandler()))
                 .register(r -> r.add(
                         ObjectMapper.class, new ObjectMapper().registerModule(new MoneySerializationModule())

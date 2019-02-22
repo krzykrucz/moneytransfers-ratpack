@@ -59,7 +59,6 @@ public class AccountApplicationServiceImpl implements AccountApplicationService 
                 openAccountCommand.getAccountNumber(),
                 openAccountCommand.getCurrency()
         );
-        // TODO use saveIfAbsent for idempotency
         saveAccountAndPublishEvents(newAccount);
     }
 

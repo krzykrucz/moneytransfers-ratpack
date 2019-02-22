@@ -3,18 +3,14 @@ package com.krzykrucz.transfers.adapters.persistence
 import com.krzykrucz.transfers.domain.account.Account
 import com.krzykrucz.transfers.domain.account.AccountIdentifier
 import com.krzykrucz.transfers.domain.account.AccountNumber
-import com.krzykrucz.transfers.domain.common.DomainEventPublisher
 import org.joda.money.Money
 import spock.lang.Specification
 
 import static org.joda.money.CurrencyUnit.USD
 
-// TODO try testing with AppServiceImpl as a root
 class InMemoryAccountRepositoryTest extends Specification {
 
     final static TEN_USD = Money.of(USD, 10)
-
-    def eventPublisher = Stub(DomainEventPublisher)
 
     def repository = new InMemoryAccountRepository()
 
