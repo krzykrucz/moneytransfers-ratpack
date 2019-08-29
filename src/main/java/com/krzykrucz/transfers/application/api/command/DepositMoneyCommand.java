@@ -1,7 +1,5 @@
 package com.krzykrucz.transfers.application.api.command;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.krzykrucz.transfers.application.jackson.MoneyDeserializer;
 import com.krzykrucz.transfers.domain.account.AccountNumber;
 import lombok.*;
 import org.joda.money.Money;
@@ -10,10 +8,8 @@ import org.joda.money.Money;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter(AccessLevel.PRIVATE)
 public class DepositMoneyCommand {
-    //TODO request id for idempotency
 
     @Getter
-    @JsonDeserialize(using = MoneyDeserializer.class)
     private Money value;
 
     private String accountNumber;

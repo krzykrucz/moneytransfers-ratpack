@@ -5,6 +5,7 @@ import lombok.Getter;
 
 public abstract class AggregateRoot {
 
+    @Getter
     private List<DomainEvent> domainEvents = List.empty();
 
     @Getter
@@ -14,6 +15,7 @@ public abstract class AggregateRoot {
         this.version = version;
     }
 
+    @SuppressWarnings("unused")
     public abstract AggregateId getId();
 
     protected void publishEvent(DomainEvent event) {
@@ -24,11 +26,9 @@ public abstract class AggregateRoot {
         return version == anotherVersion;
     }
 
-    public List<DomainEvent> finishModification() {
-        final List<DomainEvent> eventsCopy = domainEvents;
+    public void finishModification() {
         domainEvents = List.empty();
         version++;
-        return eventsCopy;
     }
 
 }

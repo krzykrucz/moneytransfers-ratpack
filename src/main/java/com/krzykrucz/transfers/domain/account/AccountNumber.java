@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.krzykrucz.transfers.domain.common.DomainException.checkDomainState;
 
 @EqualsAndHashCode
 public class AccountNumber {
@@ -14,7 +14,8 @@ public class AccountNumber {
     private final String number;
 
     public AccountNumber(String number) {
-        checkArgument(VALID_PATTERN.matcher(number).matches());
+        checkDomainState(number != null && VALID_PATTERN.matcher(number).matches(),
+                "Wrong account number");
         this.number = number;
     }
 

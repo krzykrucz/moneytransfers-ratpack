@@ -4,7 +4,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
 class TransferReceiveLimitPolicy {
-    private static final int DEFAULT_TRANSFER_RECEIVE_LIMIT = 10000;
+    private static final int DEFAULT_TRANSFER_RECEIVE_LIMIT = 15000;
 
     private final Money limit;
 

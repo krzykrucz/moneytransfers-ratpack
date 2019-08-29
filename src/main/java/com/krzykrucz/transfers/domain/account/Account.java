@@ -13,8 +13,6 @@ import org.joda.money.Money;
 import static com.krzykrucz.transfers.domain.common.DomainException.checkDomainState;
 
 @EqualsAndHashCode(of = "id", callSuper = true)
-// TODO make immutable ??
-// TODO ensure idempotency (test)
 public class Account extends AggregateRoot {
 
     @Getter
